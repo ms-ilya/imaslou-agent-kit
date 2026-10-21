@@ -1,0 +1,29 @@
+{
+  "name": "appstore-guideline-auditor",
+  "description": "Read-only App Store guideline audit for native iOS projects. Grades every finding by severity and by how firmly code evidence supports it, checks citations against Apple's current published text, and emits an App Store Connect checklist for what no code scan can decide.",
+  "version": "1.3.0",
+  "author": {
+    "name": "Ilya"
+  },
+  "repository": "https://github.com/ms-ilya/imaslou-agent-kit",
+  "license": "MIT",
+  "keywords": [
+    "ios",
+    "swift",
+    "app-store",
+    "app-review",
+    "guidelines",
+    "privacy-manifest",
+    "rejection",
+    "compliance",
+    "audit"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Appstore Guideline Auditor",
+    "shortDescription": "Read-only App Store guideline audit for native iOS projects",
+    "longDescription": "Read-only App Store guideline audit for native iOS projects. Grades every finding by severity and by how firmly code evidence supports it, checks citations against Apple's current published text, and emits an App Store Connect checklist for what no code scan can decide.",
+    "developerName": "Ilya Maslau",
+    "category": "Productivity"
+  }
+}

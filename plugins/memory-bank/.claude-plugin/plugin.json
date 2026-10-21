@@ -1,11 +1,11 @@
 {
   "name": "memory-bank",
   "description": "Living documentation system that captures current project state, organized by feature. Anti-hallucination verified.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": {
     "name": "Ilya"
   },
-  "repository": "https://github.com/ms-ilya/imaslov-claude-plugins",
+  "repository": "https://github.com/ms-ilya/imaslou-agent-kit",
   "license": "MIT",
   "keywords": ["memory-bank", "documentation", "feature", "context", "wiki", "living-docs"]
 }

@@ -5,9 +5,14 @@ description: >-
   questions about the codebase for the feature-spec skill, returning a fixed
   schema per question. Used exclusively by the feature-spec skill.
 tools: Read, Grep, Glob
-model: sonnet
 maxTurns: 20
 ---
+
+**Host mapping:** This role runs in Claude Code or Codex. Claude uses the
+frontmatter tool/effort settings; Codex receives this body and task inputs from
+the parent and uses its available tools. Model selection follows user and host
+configuration unless the user explicitly requests an override. Preserve the same
+task restrictions. Frontmatter is not a Codex permission boundary.
 
 # ABOUTME: Read-only repository investigator that answers bounded factual questions for the feature-spec interview.
 
@@ -76,8 +81,8 @@ NOT_FOUND: no call site for FastParser anywhere under import/
   in the repository" is a finding. It tells the interview that a decision has to
   be made rather than looked up. Say what you searched for, so the absence is
   checkable.
-- **Spend turns on purpose.** You have about 20 and the report needs the last
-  one. Send independent searches together in a single turn, and stop searching
+- **Spend turns on purpose.** Claude Code allows about 20 and the report needs the last
+  one. In Codex use a similarly bounded investigation, not a claimed turn limit. Send independent searches together in a single turn, and stop searching
   while a turn is still left to write the schema.
 - **Read at most about 15 files.** If the answer is not there, return
   `NOT_FOUND` with what you searched. Sprawling is worse than not answering:
@@ -147,8 +152,8 @@ answer: say the convention is inconsistent and cite two examples.
 
 ## What you never do
 
-- Never write, edit or create a file. You do not have the tools, and you must not
-  ask for them.
+- Never write, edit or create a file. This role is read-only in either host;
+  do not request write access.
 - Never answer a question you were not asked, however interesting.
 - Never return a recommendation. The interview decides; you supply facts.
 - Never return an empty `NOT_FOUND` field. Write `none` when there is nothing.

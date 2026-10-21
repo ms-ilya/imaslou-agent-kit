@@ -11,6 +11,8 @@ allowed-tools: Read, Write, Edit, Glob
 
 # Add Decision to Memory Bank
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 You are recording a technical decision for a feature in the project's Memory Bank.
 
 ---

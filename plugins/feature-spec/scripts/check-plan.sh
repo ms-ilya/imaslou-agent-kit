@@ -19,7 +19,7 @@ usage: check-plan.sh <plan-dir> --spec <path-to-spec.md> [options]
                   the current directory. The hook cannot pass one — it knows only
                   the file that was written — and a path check resolved against
                   whatever the cwd happened to be would fail on every plan in a
-                  repo Claude is not sitting at the root of.
+                  repo the current session is not sitting at the root of.
 
   --closed-world  Check only what the plan ASSERTS, never what it OMITS.
                   A plan mid-write legitimately has three task files of six and

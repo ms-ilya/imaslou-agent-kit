@@ -1,12 +1,19 @@
 # Round format
 
-A round is **one markdown block followed by one `AskUserQuestion` call.** They
+A round is **one markdown block followed by one question-tool call.** They
 render differently and have different limits. The block is your message; the
 picker shows only its own fields. Anything the user needs in order to answer has
 to be in a field or in the block above the call, because text written after the
 call is not seen until the picker has been answered.
 
-The format is the same every round, whatever the feature.
+The content is the same every round, whatever the feature. The field table
+below describes **Claude Code only**. In Codex, use the available question
+tool's actual schema and limits (including Plan-mode-only restrictions). If the
+whole round does not fit, ask one numbered message instead of splitting it into
+multiple pickers. Put open questions in a supported free-text field when the
+host provides one. Never send `preview` or `multiSelect` unless supported.
+An asynchronous tool call does not answer the questions: wait for the reply
+before recording decisions or drafting from them.
 
 ## Contents
 - The two channels
@@ -117,8 +124,9 @@ Everything but the picker is one markdown block, and the picker comes last.
 5. **One line saying a picker follows**, then the `AskUserQuestion` call.
 
 When the round has open questions, end your turn after the picker so the user
-can answer them in a reply. When every question was in the picker, its result is
-the round's answers and the run goes straight on.
+can answer them in a reply. If the picker returns the user's answers to every
+question synchronously, the run can continue. An asynchronous acknowledgment
+is not an answer; wait for the user's reply before continuing.
 
 **No preamble, no praise.** The block opens on the grounding or on the table.
 

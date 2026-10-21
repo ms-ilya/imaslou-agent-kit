@@ -80,12 +80,12 @@ Honor the request. If they say "include a labor union perspective", build an age
 
 ## Fallback: Inline Simulation Mode
 
-If the Agent tool is unavailable or all subagent calls fail, fall back to **inline simulation**:
+If the host has no subagent tool, cannot provide independent contexts, or all subagent calls fail, fall back to **inline simulation**:
 
 - Play all agent roles sequentially in a single response
 - Maintain distinct voices, cross-examination structure, and Judge verdict
 - Label each section clearly with agent identifiers
-- Explicitly tell the user: *"Note: This is a simulated debate (single-model, sequential). For independent parallel agents, ensure the Agent tool is available."*
+- Explicitly tell the user: *"Note: This is a simulated debate (single-model, sequential). For independent parallel agents, use a host with independent subagent support."*
 
 Inline simulation is less rigorous because agents share implicit context, but still provides structured multi-perspective analysis. Use it as a last resort, not the default. Archetype enrichment still applies in inline mode — use the same distilled thinking pattern and argumentation style fields for each simulated agent persona.
 
@@ -93,7 +93,7 @@ Inline simulation is less rigorous because agents share implicit context, but st
 
 ## Performance Notes
 
-- **Parallelism:** Multiple Agent tool calls in a single response run concurrently. 3 agents = 3 simultaneous subagents per round. Total for a full 3-round debate: 9 subagent calls + 0 for judgment.
+- **Parallelism:** Dispatch within the host’s available capacity; queue excess participants. Three available worker slots allow three simultaneous participants per round. Total for a full 3-round debate: 9 subagent calls + 0 for judgment.
 - **Latency:** Each round is limited by its slowest agent. Rounds do not overlap, so a full debate takes three agent round-trips plus the judgment.
 - **Token budget:** With 200-350 word responses, each agent produces ~300-500 output tokens. Total debate: ~3,000-5,000 output tokens across all agent calls. The Judge synthesis adds ~400-700 tokens.
 - **Scaling:** With 5 agents, input tokens for Round 2 scale quadratically (each agent reads all others' outputs). When agent count > 3, consider summarizing each R1 output to ~100 words before feeding to other agents in Round 2. Full outputs are preserved for the Judge.

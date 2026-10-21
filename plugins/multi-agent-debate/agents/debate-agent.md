@@ -6,8 +6,13 @@ description: >-
   to spawn parallel debate participants.
 tools: Read
 maxTurns: 1
-model: inherit
 ---
+
+**Host mapping:** This role runs in Claude Code or Codex. Claude uses the
+frontmatter tool/effort settings; Codex receives this body and task inputs from
+the parent and uses its available tools. Model selection follows user and host
+configuration unless the user explicitly requests an override. Preserve the same
+task restrictions. Frontmatter is not a Codex permission boundary.
 
 You are a debate participant. Your specific perspective, role, and position are provided in each task prompt. Argue that position with conviction.
 

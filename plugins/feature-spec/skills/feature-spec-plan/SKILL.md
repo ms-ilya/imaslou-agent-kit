@@ -28,6 +28,8 @@ hooks:
 
 # ABOUTME: Runs phases 8-11 of the feature-spec pipeline — slice, write, critique, report — turning a verified spec into a checked implementation plan.
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 You turn a finished, critic-verified spec into an implementation plan: ordered
 tasks, milestones drawn from the spec's own priorities, and a done-condition per
 task quoted from the spec rather than restated.
@@ -35,12 +37,11 @@ task quoted from the spec rather than restated.
 **You write the plan. You do not implement it.** No code, no edits outside the
 plan directory, no estimates in hours or days.
 
-Self-contained: everything you need is below or in
-`${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/`. Do not read another
-skill's `SKILL.md`. The reference files write the plugin's install directory as
-a `CLAUDE_PLUGIN_ROOT` variable, which is filled in only on this page: it is
-`${CLAUDE_PLUGIN_ROOT}`. Put that path in wherever a reference shows a file or a
-command.
+Self-contained: shared references live in
+`<plugin-root>/skills/feature-spec/references/`. Do not read another skill's
+`SKILL.md`. Resolve paths using the runtime conventions. In Codex this workflow
+runs in the current session; use only the supplied spec and record as design
+inputs. Its critic must still receive a fresh, independent context.
 
 `<specdir>` below is the directory that holds the spec:
 `<spec root>/<YYYY-MM-DD>-<slug>/`, where the spec root is `docs/specs/` unless
@@ -75,17 +76,17 @@ directory.
 | **R21** | Do not present an implementation decision the spec did not settle as settled. It goes in `## Plan assumptions` with what reversing it would cost: the spec is behaviour-only, so every technology choice in the plan is new. |
 
 
-## This runs in isolation
+## Use only the recorded design
 
-`context: fork` — the skill body is the whole prompt, and there is no conversation
-history behind it. The spec and the record are the only inputs, so a
-half-remembered discussion cannot leak in and be mistaken for something the spec
-says.
+In Claude Code, `context: fork` runs this skill without the parent conversation
+history. In Codex, the skill runs in the current session, so enforce the same
+input boundary explicitly: use the spec and record as the design authority,
+never a remembered discussion. Do not claim that Codex isolated the context.
 
 - **You cannot ask the user anything.** Every path that would otherwise ask does
   the safe thing and reports it. No argument → list and stop. An ambiguous slug →
   list the matches and stop. An existing plan → stop and say so.
-- **Nothing is inherited.** Read `spec.md`, `tree.md` and exactly the files the
+- **No unrecorded design is inherited.** Read `spec.md`, `tree.md` and exactly the files the
   record's `## Reads` names. If something you need is not there, that is a plan
   assumption (R21) or an open question (R20) — never a gap to fill from memory.
 
@@ -95,8 +96,8 @@ says.
 `<spec root>/*-<slug>`**: one match proceeds; several are listed and the run
 stops; none means stop and list what exists.
 
-No argument → **list the slugs that have a spec but no plan, and stop.** List and
-stop, not list and ask: there is no conversation to ask into.
+No argument → **list the slugs that have a spec but no plan, and stop.** This
+workflow requires an explicit input; it does not open a new interview.
 
 **Stop and say so** if `spec.md` is missing or unparseable. A spec that never
 finished is `/feature-spec --resume`'s job, not yours.
@@ -128,8 +129,8 @@ used when the spec was amended and the map is still right.
 ## Phase 8 — SLICE
 
 Load, once:
-- `${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/task-slicing.md`
-- `${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/plan-template.md`
+- `<plugin-root>/skills/feature-spec/references/task-slicing.md`
+- `<plugin-root>/skills/feature-spec/references/plan-template.md`
 
 Read `spec.md`, `tree.md`, and exactly the files the record's `## Reads` names.
 **Nothing else.** The record's grounding facts are where real paths come from; a
@@ -167,8 +168,8 @@ Leave the `## Task graph` table empty at first — it is **generated**, never ha
 written. Then:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/make-progress.sh <specdir>/plan
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-plan.sh <specdir>/plan --spec <specdir>/spec.md --repo-root .
+bash "<plugin-root>/scripts/make-progress.sh" <specdir>/plan
+bash "<plugin-root>/scripts/check-plan.sh" <specdir>/plan --spec <specdir>/spec.md --repo-root .
 ```
 
 Fix until clean, in a loop of at most three rounds. **A finding from
@@ -186,7 +187,7 @@ did not do the work, and a plan that ships pre-ticked is a plan nobody trusts.
 **Build the packet with the script. Never by hand.**
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/make-plan-packet.sh <specdir>/plan --spec <specdir>/spec.md --tree <specdir>/tree.md --out <specdir>/.work/plan-critic-packet.md
+bash "<plugin-root>/scripts/make-plan-packet.sh" <specdir>/plan --spec <specdir>/spec.md --tree <specdir>/tree.md --out <specdir>/.work/plan-critic-packet.md
 ```
 
 Dispatch the `plan-critic` agent with one line: the absolute path of the packet,
@@ -198,7 +199,7 @@ Save the critic's reply verbatim as `<specdir>/plan/plan-critique.md`, then vali
 it:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-critique.sh <specdir>/plan/plan-critique.md --single --packet <specdir>/.work/plan-critic-packet.md
+bash "<plugin-root>/scripts/check-critique.sh" <specdir>/plan/plan-critique.md --single --packet <specdir>/.work/plan-critic-packet.md
 ```
 
 The script checks the reply's shape, that a clean verdict names what it checked,
@@ -211,13 +212,13 @@ not in the packet is not acted on, and the report says so.
 **once** more on a packet that carries the first pass:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/make-plan-packet.sh <specdir>/plan --spec <specdir>/spec.md --tree <specdir>/tree.md --pass1 <specdir>/plan/plan-critique.md --out <specdir>/.work/plan-critic-packet.md
+bash "<plugin-root>/scripts/make-plan-packet.sh" <specdir>/plan --spec <specdir>/spec.md --tree <specdir>/tree.md --pass1 <specdir>/plan/plan-critique.md --out <specdir>/.work/plan-critic-packet.md
 ```
 
 Save that reply as `<specdir>/plan/plan-critique.pass2.md` and reconcile the two:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-critique.sh <specdir>/plan/plan-critique.md <specdir>/plan/plan-critique.pass2.md --packet <specdir>/.work/plan-critic-packet.md
+bash "<plugin-root>/scripts/check-critique.sh" <specdir>/plan/plan-critique.md <specdir>/plan/plan-critique.pass2.md --packet <specdir>/.work/plan-critic-packet.md
 ```
 
 The script asserts the second pass says what became of every blocking finding
@@ -229,8 +230,8 @@ the two files are the critique, and what is unresolved stays in them.
 Regenerate the task graph one last time, because the fixes moved things:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/make-progress.sh <specdir>/plan
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-plan.sh <specdir>/plan --spec <specdir>/spec.md --repo-root .
+bash "<plugin-root>/scripts/make-progress.sh" <specdir>/plan
+bash "<plugin-root>/scripts/check-plan.sh" <specdir>/plan --spec <specdir>/spec.md --repo-root .
 ```
 
 Report: paths · task count and milestone boundaries · what each milestone ships ·
@@ -255,7 +256,7 @@ weaker than it looks:
 
 ## Degradation
 
-Load `${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/degradation.md` the
+Load `<plugin-root>/skills/feature-spec/references/degradation.md` the
 moment you hit a failure path. The rows that apply here: a critic still blocking
 after two passes, a critic that returns nothing usable, and an existing
 directory written by another tool. A spec or a record that will not parse is
@@ -275,25 +276,29 @@ Load at the phase that needs it, **once**.
 
 | File | Loaded at |
 |---|---|
-| `${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/task-slicing.md` | Phase 8 |
-| `${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/plan-template.md` | Phase 8 |
-| `${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/plan-rubric.md` | Phase 10 — **passed inline to the agent** by the packet script, not loaded by you |
-| `${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/degradation.md` | on hitting a failure path |
+| `<plugin-root>/skills/feature-spec/references/task-slicing.md` | Phase 8 |
+| `<plugin-root>/skills/feature-spec/references/plan-template.md` | Phase 8 |
+| `<plugin-root>/skills/feature-spec/references/plan-rubric.md` | Phase 10 — **passed inline to the agent** by the packet script, not loaded by you |
+| `<plugin-root>/skills/feature-spec/references/degradation.md` | on hitting a failure path |
 
 ## Scripts
 
-Run each as `bash <script> …`, the form the grants cover. Do not reimplement
+Run each as `bash "<absolute-script-path>" …`, quoting path arguments. Claude
+Code grants cover the bundled scripts; Codex uses its normal shell permissions. Do not reimplement
 their checks in prose.
 
 | Script | When |
 |---|---|
-| `${CLAUDE_PLUGIN_ROOT}/scripts/make-progress.sh <plan-dir>` | after writing or changing any task file — owns the task-graph table |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/check-plan.sh <plan-dir> --spec <spec.md> --repo-root .` | after writing, in a fix-until-clean loop, and again at the end |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/make-plan-packet.sh <plan-dir> --spec <spec.md> --tree <tree.md> --out <packet> [--pass1 <first reply>]` | Phase 10 — builds the critic packet; never assemble it by hand |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/check-critique.sh <reply> --single --packet <packet>` · `<reply 1> <reply 2> --packet <packet>` | after each critic pass, and to reconcile the two |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/check-spec.sh <spec.md> --tree <tree.md>` | only to diagnose a spec that will not parse |
+| `<plugin-root>/scripts/make-progress.sh <plan-dir>` | after writing or changing any task file — owns the task-graph table |
+| `<plugin-root>/scripts/check-plan.sh <plan-dir> --spec <spec.md> --repo-root .` | after writing, in a fix-until-clean loop, and again at the end |
+| `<plugin-root>/scripts/make-plan-packet.sh <plan-dir> --spec <spec.md> --tree <tree.md> --out <packet> [--pass1 <first reply>]` | Phase 10 — builds the critic packet; never assemble it by hand |
+| `<plugin-root>/scripts/check-critique.sh <reply> --single --packet <packet>` · `<reply 1> <reply 2> --packet <packet>` | after each critic pass, and to reconcile the two |
+| `<plugin-root>/scripts/check-spec.sh <spec.md> --tree <tree.md>` | only to diagnose a spec that will not parse |
 
-**The hook validates every write, closed-world:** it checks what you wrote, never
+**After every plan or task write, validate closed-world.** Claude Code runs the
+skill hook. In Codex run
+`bash "<plugin-root>/scripts/check-plan.sh" <plan-dir> --spec <spec.md> --closed-world`
+yourself. It checks what you wrote, never
 what you have not written yet. A plan with three task files of six and no graph
 table passes. A fabricated `Covers` tag fails at any stage. Run the script
 yourself at the gate — that is where completeness is required.

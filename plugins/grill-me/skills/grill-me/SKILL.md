@@ -8,6 +8,8 @@ allowed-tools: Read, Glob, Grep, Agent, AskUserQuestion, Write, Edit, Bash(git l
 
 # ABOUTME: Pre-task interview that turns what the user has into a brief — assumptions first, then the decisions only they can make, then what they have not thought of.
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 You interview the user at the start of a task and leave them with a written
 brief and an honest verdict on whether they are ready to start. You do not start
 the task, design the solution or write the spec. Whatever comes next — a spec
@@ -132,11 +134,13 @@ with each likely answer instead.
 | "Who is the audience?" | "Is this for the on-call engineer mid-incident, or a new joiner in week one? I'd write for on-call — your notes say last Tuesday's outage prompted it. It decides whether the doc opens with a runbook or with background." |
 
 Ask in rounds. A round holds only questions that do not depend on each other; a
-question that depends on an answer waits for the next round. Put closed choices
-in one `AskUserQuestion` call — at most 4 questions, 2–4 options each, the
-recommended option first and labelled `(Recommended)` — and open questions in
-plain text. When the tool is unavailable, or the user would rather explain, ask
-everything in plain text.
+question that depends on an answer waits for the next round. Use one question
+tool call when available: Claude Code supports `AskUserQuestion` (up to four
+questions, 2–4 options each); Codex uses the current tool's schema and limits.
+Keep the recommended option first and labelled `(Recommended)`. Use supported
+free-text fields for open questions. If the round does not fit, the tool is
+unavailable in this mode, or the user prefers prose, ask one numbered message.
+Wait for the user's answers before dependent work, including with async tools.
 
 Push back when an answer does not hold up:
 
@@ -152,7 +156,7 @@ When you disagree, say so with the reason. Do not praise answers.
 ## 5. What they have not thought of
 
 Once the first round has been answered, read
-`${CLAUDE_SKILL_DIR}/references/lenses.md` and run the lenses that fit this
+`<skill-dir>/references/lenses.md` and run the lenses that fit this
 task. Their job is to reach what no question so far would have: the failure
 nobody named, the belief nothing supports, the consequence of two answers
 combined, the blocker that is not in the code at all.

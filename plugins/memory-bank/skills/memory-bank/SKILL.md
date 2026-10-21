@@ -13,6 +13,8 @@ allowed-tools: Read, Glob, Grep
 
 # Memory Bank — Living Project Documentation
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 ## Purpose
 
 The Memory Bank captures **what is true right now** about a project, organized by feature. It gives an AI agent (or a new developer) the fastest path to understanding any feature.
@@ -68,6 +70,6 @@ Shared references live in this skill's `references/` directory. Sub-skills read 
 
 | Reference | When to read |
 |-----------|-------------|
-| `${CLAUDE_SKILL_DIR}/references/templates.md` | Just before writing each file (read only the relevant section) |
-| `${CLAUDE_SKILL_DIR}/references/verification.md` | At verification time (not during Pre-Flight) |
-| `${CLAUDE_SKILL_DIR}/references/swift-intelligence.md` | Only for Swift/iOS/macOS projects |
+| `<skill-dir>/references/templates.md` | Just before writing each file (read only the relevant section) |
+| `<skill-dir>/references/verification.md` | At verification time (not during Pre-Flight) |
+| `<skill-dir>/references/swift-intelligence.md` | Only for Swift/iOS/macOS projects |

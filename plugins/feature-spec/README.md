@@ -1,5 +1,44 @@
 # feature-spec
 
+Works in **Claude Code and Codex**. Install the complete plugin so its skills,
+references, scripts and agent instructions stay together.
+
+## Installation and invocation
+
+**Claude Code** (inside the Claude Code prompt):
+
+```text
+/plugin marketplace add ms-ilya/imaslou-agent-kit
+/plugin install feature-spec@imaslou-agent-kit
+```
+
+**Codex** (in a terminal with a plugin-capable Codex CLI):
+
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add feature-spec@imaslou-agent-kit
+```
+
+Start a new session after installation. Invoke `/feature-spec:feature-spec` in
+Claude Code or `$feature-spec` in Codex. The slash examples below use Claude
+Code syntax; Codex uses `$<skill-name>` with the same input and flags. Natural
+language triggers apply only to skills that allow automatic invocation.
+See the [kit installation guide](../../README.md#installation) and the bundled
+[runtime conventions](references/runtime.md) for tool and subagent differences.
+
+Model selection follows your host configuration, including subagent defaults.
+The plugin supplies no model override; workers normally inherit the active
+session's model when no host override applies. You can request a supported
+model explicitly.
+
+Independent agent stages require host subagent support. Runs with limited
+delegation report that limitation.
+
+Requires Bash and Python 3. Claude Code runs the skill’s validation hooks; Codex
+runs the same checks explicitly after writes and at phase gates. Both skills
+require explicit invocation.
+
+
 **Turns what you already have into a critic-verified spec — and a separate
 command that turns that spec into a checked implementation plan.**
 
@@ -18,28 +57,20 @@ written.
 
 **The spec run stops at the spec, and never learns that a plan can follow it.**
 That separation is load-bearing: a spec written as a gate on the way to code gets
-optimised to be *passed* rather than to be good. `/feature-spec-plan` is a
+optimised to be *passed* rather than to be good. `/feature-spec:feature-spec-plan` is a
 downstream consumer, mentioned once in the final report and nowhere else.
 
 Sharpest on Swift/iOS, TypeScript/React and Python. Fully functional everywhere else.
 
 ---
 
-## Install
-
-```
-/plugin marketplace add ms-ilya/imaslov-claude-plugins
-/plugin install feature-spec
-```
-
-No setup command, no config file, no dependencies on other plugins.
 
 ## Commands
 
 | Command | Runs | Writes |
 |---|---|---|
-| `/feature-spec <idea and/or documents>` | intake, clarify if needed, strategy, draft, critique, publish | `spec.md`, `tree.md`, `critique.md`, `traceability.md`, glossary, ADRs |
-| `/feature-spec-plan <slug>` | slice a finished spec into tasks | `plan/plan.md`, `plan/tasks/T0N.md`, `plan/plan-critique.md` |
+| `/feature-spec:feature-spec <idea and/or documents>` | intake, clarify if needed, strategy, draft, critique, publish | `spec.md`, `tree.md`, `critique.md`, `traceability.md`, glossary, ADRs |
+| `/feature-spec:feature-spec-plan <slug>` | slice a finished spec into tasks | `plan/plan.md`, `plan/tasks/T0N.md`, `plan/plan-critique.md` |
 
 **Flags:** `--resume` · `--scope <path>`. For the plan: `--extend`,
 `--tasks-only`, `--from-spec <path>`, `--out <dir>`.
@@ -91,7 +122,7 @@ docs/specs/<YYYY-MM-DD>-<slug>/
 ├── tree.md            ← the design record: every decision, with its reasoning
 ├── critique.md        ← the critic's reply, verbatim (critique.pass2.md beside it if a second pass ran)
 ├── traceability.md    ← requirement → decision → reasoning → where it came from
-└── plan/              ← only if you run /feature-spec-plan
+└── plan/              ← only if you run /feature-spec:feature-spec-plan
     ├── plan.md            ← approach, seams, milestones, generated task graph
     ├── tasks/T01.md …     ← one file per task; the only place a status lives
     └── plan-critique.md   ← the plan critic's reply, verbatim
@@ -113,7 +144,7 @@ create `0007-`.
 
 ## The plan stage
 
-`/feature-spec-plan <slug>` is the only command that reads a finished spec. It
+`/feature-spec:feature-spec-plan <slug>` is the only command that reads a finished spec. It
 skips everything the spec run already did — research, approach options, the user
 picking one — and starts where a generic planner cannot: with a verified spec, a
 prioritised story list, acceptance scenarios, real seams from the grounding
@@ -152,7 +183,7 @@ What it adds that a task list from any agent does not:
   disagree.
 
 An existing plan is never silently overwritten: the command prints its state
-and stops. `/feature-spec-plan <slug> --extend` keeps every task and status and
+and stops. `/feature-spec:feature-spec-plan <slug> --extend` keeps every task and status and
 adds tasks for what the spec gained; to replan from scratch, move `plan/` aside
 yourself and run the command again. After an amendment you almost always want
 `--extend`: a spec that gained `FR-010` does not invalidate `T01`, and a replan
@@ -193,8 +224,9 @@ category list is this plugin's own — see Prior art.
   the moment it is known. Auto-compaction mid-run is the failure mode that kills
   this kind of tool, and it is designed around rather than hoped against.
 - **It enforces the rules you already wrote down.** It reads the project's
-  `AGENTS.md`, `CLAUDE.md` and `.claude/rules/*.md`, then your own in `~/.claude/`,
-  and checks the spec against them; project rules win where the two disagree. It
+  applicable project and user instructions from the current host (including
+  scoped `AGENTS.md` in Codex and `CLAUDE.md`/rules in Claude Code), and checks
+  the spec against them using the host's instruction precedence. It
   ships **no rules of its own and invents none.** A justified deviation is
   recorded with the rule quoted verbatim and what was considered instead.
 - **Every requirement is traceable, and the tag is resolved rather than trusted.**
@@ -222,9 +254,9 @@ category list is this plugin's own — see Prior art.
 - **The checkers are themselves tested.** A maintainer self-test, not shipped
   with the plugin, asserts the shipped skeletons validate, then mutates one rule
   at a time and asserts that rule's specific failure fires — 237 assertions.
-- **Validation is a hook, not a remembered step — and it knows the difference
-  between incomplete and wrong.** A `PostToolUse` hook runs the right checker
-  every time the design record, a draft, the plan or a task file is written. It
+- **Validation distinguishes incomplete from wrong.** In Claude Code a
+  `PostToolUse` hook runs the checker after writes to the record, draft, plan or
+  task files. In Codex the skill explicitly runs the same check after writes. It
   runs **closed-world** checks only: assertions about what the file says, never
   about what it has not said yet. A record at the end of intake legitimately has
   no coverage table; a draft at write three of nine has no acceptance scenarios.
@@ -236,15 +268,15 @@ category list is this plugin's own — see Prior art.
 
 - **`grill-me`** — upstream, and independent. Its brief keeps what you decided
   apart from what was only assumed, which is exactly the split intake needs:
-  `/feature-spec docs/briefs/<file>`. Neither plugin requires the other. When an
-  idea is too vague to slug, this plugin names `/grill-me` as the place to start;
+  `/feature-spec:feature-spec docs/briefs/<file>`. Neither plugin requires the other. When an
+  idea is too vague to slug, this plugin names `/grill-me:grill-me` as the place to start;
   a suggestion, never a call.
 - **`memory-bank`** — no conflict by construction. This plugin writes only inside
   its own spec root, so its glossary cannot collide with anything. An
   existing `memory-bank/`, `CONTEXT.md` or project glossary is **read** as
   grounding and cited; a term defined there is never redefined here.
 - **`multi-agent-debate`** — when a strategy choice looks genuinely contested,
-  the strategy phase points you at `/multi-agent-debate` rather than rebuilding
+  the strategy phase points you at `/multi-agent-debate:multi-agent-debate` rather than rebuilding
   it. A suggestion, never an automatic call.
 - **`ios-quick-review` / `ios-comprehensive-review`** — downstream. They review
   code this spec eventually produces.
@@ -257,7 +289,7 @@ breakdown in it. *How* is a separate document, written by a separate command,
 from the finished spec.
 
 No long interview: two short rounds at most, by design. No implementation, no
-TDD, no `/implement` — `/feature-spec-plan` writes the plan and stops. No
+TDD, no `/implement` — `/feature-spec:feature-spec-plan` writes the plan and stops. No
 issue-tracker publishing. No estimates in hours, days or story points, at either
 stage. No dependency on other plugins. No config file. **No rules of its own.**
 
@@ -266,24 +298,25 @@ stage. No dependency on other plugins. No config file. **No rules of its own.**
 - **ADR numbering races.** When your project already numbers records `NNNN-`, the
   plugin scans for the highest and adds one — which two concurrent branches can
   both do. When it creates the directory itself it uses a date prefix.
-- **The spec run uses your session's model and effort.** The subagents do not:
-  the fact-finder and both critics run on `sonnet`, the critics at high effort,
-  whatever the session uses.
-  `/feature-spec-plan` is a different case: it runs `context: fork`, so planning
-  has its own clean context and cannot ask you anything. Every path there that
-  would otherwise ask lists its options and stops.
-- **Script approvals cover one turn.** The skills pre-approve their checker
+- **Models and context depend on the host.** Both hosts resolve models from
+  user configuration; the plugin supplies no model override. Claude Code keeps
+  the registered effort settings and forks the planning skill. Codex runs
+  planning in the current session from the spec and record; each critic receives
+  a fresh context with only its role and packet.
+  Missing independent review is reported, never presented as a critic pass.
+- **Claude Code script approvals can be requested again after a round.** The skills pre-approve their checker
   scripts, and Claude Code applies that approval to the turn that invokes the
   skill. A run with no clarifying round finishes inside it. After you answer a
   round, you may be asked before a checker runs again; allow it once for the
   session.
 - **The plugin never reports a token figure**, because it cannot count one, and a
-  number it cannot count would be fabrication (R11). Use `/context`.
+  number it cannot count would be fabrication (R11). Use the host’s usage display
+  when available (`/context` in Claude Code).
 - **The plan cannot check that a task does what its tag claims.** `check-plan.sh`
   proves `T03` claims `FR-002` and that `FR-002` exists. Whether `T03`'s action
   items deliver `FR-002`'s behaviour is a judgement, and it is the plan critic's
   first lens rather than a script's.
-- **`/feature-spec-plan` has one shape**, with one critic pass by default. If
+- **`/feature-spec:feature-spec-plan` has one shape**, with one critic pass by default. If
   that proves wrong on large specs, the packet script already supports three
   parallel lenses.
 
@@ -292,7 +325,7 @@ stage. No dependency on other plugins. No config file. **No rules of its own.**
 | 1.x | 2.0 |
 |---|---|
 | `/feature-spec-grill` | removed. Interview with a dedicated tool such as `grill-me`, then pass its brief |
-| `/feature-spec-write <slug>` | removed. `/feature-spec <slug> --resume` finishes an unfinished run |
+| `/feature-spec-write <slug>` | removed. `/feature-spec:feature-spec <slug> --resume` finishes an unfinished run |
 | `--fast`, `--deep` | removed. The input decides how much is asked; the critic always runs once |
 | `--prior-art <doc>` | removed as a flag. Pass the path; every document is checked this way |
 | Up to five rounds | two per session |
@@ -321,7 +354,7 @@ than trusting itself to follow the rule in prose:
 | `scripts/spec-diff.sh` | by `publish-spec.sh`, on an amendment | renders what actually changed: added, withdrawn, reworded under a stable identifier, and criteria whose numbers moved |
 
 The checkers are run by the skill itself in a fix-until-clean loop, **and again
-by a `PostToolUse` hook** on every write to the record, a draft, the plan or a
+by a Claude Code `PostToolUse` hook or explicit Codex checks** on every write to the record, a draft, the plan or a
 task file. A finding from any of them is not a critic finding — it is fixed
 silently.
 
@@ -386,7 +419,7 @@ it: recompute, never accept a self-report.
 
 Its phases 1–3 are also absent, because the spec run already did them: research,
 2–3 approach options with trade-offs, and the user picking one, with the rejected
-options recorded. `/feature-spec-plan` starts at what that skill calls Phase 4.
+options recorded. `/feature-spec:feature-spec-plan` starts at what that skill calls Phase 4.
 
 ## Licence
 

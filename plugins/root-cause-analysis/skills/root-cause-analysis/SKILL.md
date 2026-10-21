@@ -13,6 +13,8 @@ allowed-tools: Read, Write, Glob, Grep, Agent, AskUserQuestion
 
 # Root Cause Analysis
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 Investigate codebases to find the underlying reason for failures. Produce evidence-backed findings, not speculation.
 
 **Core principle:** A symptom is what you see (crash, error, slow response). A root cause is the systemic reason it happened (missing validation, no test coverage, config drift). Always dig past the symptom.
@@ -87,9 +89,9 @@ Use Bash for git operations:
 - Glob for test files — is this code path tested?
 - Glob for config files — could environment differences explain the issue?
 
-**Standard scope:** Use the Quick Investigation Checklist from `${CLAUDE_SKILL_DIR}/references/techniques.md` mentally — have you considered factors beyond code? (Data, Infrastructure, Process, People)
+**Standard scope:** Use the Quick Investigation Checklist from `<skill-dir>/references/techniques.md` mentally — have you considered factors beyond code? (Data, Infrastructure, Process, People)
 
-**Full scope:** Read `${CLAUDE_SKILL_DIR}/references/techniques.md` and use the fishbone categories to structure a broader investigation. Trigger parallel agent delegation (see below).
+**Full scope:** Read `<skill-dir>/references/techniques.md` and use the fishbone categories to structure a broader investigation. Trigger parallel agent delegation (see below).
 
 ### Agent Delegation (Full Scope)
 
@@ -262,17 +264,17 @@ Assign severity based on impact:
 
 ### Standard / Full scope
 
-1. Read `${CLAUDE_SKILL_DIR}/references/templates.md` for the RCA Report template (read once — this is the only read of this file)
-2. Write the report to `rca-reports/RCA-<kebab-case-issue-name>.md` (the Write tool creates the directory)
+1. Read `<skill-dir>/references/templates.md` for the RCA Report template (read once — this is the only read of this file)
+2. Write the report to `rca-reports/RCA-<kebab-case-issue-name>.md` (create the parent directory first if the host’s write tool requires it)
 3. Include the evidence ledger in the report
 4. Include confidence rating with the root cause
 5. For solutions, always include three tiers:
    - **Immediate:** Fix the specific symptom
    - **Short-term:** Prevent this exact recurrence (test, alert, validation)
    - **Long-term:** Systemic fix that prevents the class of failure
-6. Prefer systemic solutions over individual fixes — see `${CLAUDE_SKILL_DIR}/references/techniques.md` Systemic vs Individual table
+6. Prefer systemic solutions over individual fixes — see `<skill-dir>/references/techniques.md` Systemic vs Individual table
 7. **Contributing Factors:** Review the evidence ledger for findings that contributed to the incident but aren't part of the main 5 Whys chain. Record these in the Contributing Factors table with their category (Code/Data/Infrastructure/Process) and evidence ID.
-8. Run the Follow-Up Checklist from `${CLAUDE_SKILL_DIR}/references/templates.md` to verify completeness
+8. Run the Follow-Up Checklist from `<skill-dir>/references/templates.md` to verify completeness
 
 ## Tool Strategy
 
@@ -286,7 +288,7 @@ Assign severity based on impact:
 | **Write** | Create RCA report file (Standard/Full scope) |
 | **AskUserQuestion** | Clarify an unclear symptom (Phase 0), resolve split evidence or a scope upgrade (Phase 1), confirm the root cause before a report is written (Phase 2) |
 
-`Grep` and `Glob` in this skill name the search, not a particular tool: on macOS and Linux the main session and general-purpose subagents have no Grep or Glob tool and search with `grep` and `find` through Bash. Either form is fine; what matters is that every claim rests on a search or read run in this session.
+`Grep` and `Glob` in this skill name the search, not a particular tool: tool availability depends on the host; use `rg` and `rg --files` through the shell when dedicated search tools are absent. Either form is fine; what matters is that every claim rests on a search or read run in this session.
 
 ## Token Management
 

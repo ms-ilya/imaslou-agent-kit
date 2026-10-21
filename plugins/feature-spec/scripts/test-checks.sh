@@ -1354,7 +1354,7 @@ for path in sorted(glob.glob(os.path.join(sys.argv[1], '*', 'SKILL.md'))):
     fm = text.split('---', 2)[1] if text.startswith('---') else ''
     granted = set(re.findall(r'Bash\(bash \$\{CLAUDE_PLUGIN_ROOT\}/scripts/([\w.-]+\.sh)', fm))
     body = text.split('---', 2)[2] if text.startswith('---') else text
-    used = set(re.findall(r'\$\{CLAUDE_PLUGIN_ROOT\}/scripts/([\w.-]+\.sh)', body))
+    used = set(re.findall(r'(?:\$\{CLAUDE_PLUGIN_ROOT\}|<plugin-root>)/scripts/([\w.-]+\.sh)', body))
     missing = sorted(used - granted)
     unused = sorted(granted - used)
     if missing:

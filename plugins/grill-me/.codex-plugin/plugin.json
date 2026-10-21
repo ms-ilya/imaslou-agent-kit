@@ -1,0 +1,28 @@
+{
+  "name": "grill-me",
+  "description": "Pre-task interview that states its assumptions, asks only the decisions it cannot look up or responsibly assume, probes for what you have not thought of, and leaves a written brief with a readiness verdict.",
+  "version": "1.1.0",
+  "author": {
+    "name": "Ilya"
+  },
+  "repository": "https://github.com/ms-ilya/imaslou-agent-kit",
+  "license": "MIT",
+  "keywords": [
+    "interview",
+    "grill",
+    "requirements",
+    "unknown-unknowns",
+    "assumptions",
+    "premortem",
+    "brief",
+    "planning"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Grill Me",
+    "shortDescription": "Pre-task interview that states its assumptions, asks only the decisions it cannot look up, probes for what you have not thought of, and leaves a written brief with a readiness verdict",
+    "longDescription": "Pre-task interview that states its assumptions, asks only the decisions it cannot look up or responsibly assume, probes for what you have not thought of, and leaves a written brief with a readiness verdict.",
+    "developerName": "Ilya Maslau",
+    "category": "Productivity"
+  }
+}

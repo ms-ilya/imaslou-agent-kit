@@ -1,5 +1,40 @@
 # Multi-agent debate plugin
 
+Works in **Claude Code and Codex**. Install the complete plugin so its skills,
+references, scripts and agent instructions stay together.
+
+## Installation and invocation
+
+**Claude Code** (inside the Claude Code prompt):
+
+```text
+/plugin marketplace add ms-ilya/imaslou-agent-kit
+/plugin install multi-agent-debate@imaslou-agent-kit
+```
+
+**Codex** (in a terminal with a plugin-capable Codex CLI):
+
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add multi-agent-debate@imaslou-agent-kit
+```
+
+Start a new session after installation. Invoke `/multi-agent-debate:multi-agent-debate` in
+Claude Code or `$multi-agent-debate` in Codex. The slash examples below use Claude
+Code syntax; Codex uses `$<skill-name>` with the same input and flags. Natural
+language triggers apply only to skills that allow automatic invocation.
+See the [kit installation guide](../../README.md#installation) and the bundled
+[runtime conventions](references/runtime.md) for tool and subagent differences.
+
+Model selection follows your host configuration, including subagent defaults.
+The plugin supplies no model override; workers normally inherit the active
+session's model when no host override applies. You can request a supported
+model explicitly.
+
+Independent agent stages require host subagent support. Runs with limited
+delegation report that limitation.
+
+
 ## The problem
 
 When one AI is asked to "consider both sides," it tends to agree with itself. All the "perspectives" share the same context, so they converge on the same conclusion in different words. There is no real disagreement.
@@ -17,9 +52,9 @@ The debate runs through structured rounds, each dispatched as parallel Agent too
 ```
 Step 0: Parse & Frame       →  Identify the issue, narrow if too broad, choose debate depth
 Step 1: Agent Assembly      →  Select 3-5 agents tailored to the specific issue
-Step 2: Build & Dispatch    →  Construct system prompts, spawn parallel Agent subagents
+Step 2: Build & Dispatch    →  Construct role prompts, spawn independent subagents
 Step 3: Round Execution     →  Opening → Cross-Examination → Rebuttals (3 rounds or 2 for quick)
-Step 4: Final Judgment      →  Claude steps into Judge role, synthesizes verdict
+Step 4: Final Judgment      →  The agent steps into Judge role, synthesizes verdict
 Step 5: Post-Debate Options →  Go deeper, challenge, add agent, or export
 ```
 
@@ -89,10 +124,10 @@ This plugin provides:
 
 | Component | Name | Purpose |
 |-----------|------|---------|
-| **Skill** | `/multi-agent-debate` | Orchestrator workflow: assembles panels, dispatches rounds, synthesizes verdicts |
+| **Skill** | `/multi-agent-debate:multi-agent-debate` | Orchestrator workflow: assembles panels, dispatches rounds, synthesizes verdicts |
 | **Agent** | `debate-agent` | Debate participant subagent for text-only arguments: one reply (`maxTurns: 1`) and no tool that writes or runs anything |
 
-Trigger with: `/multi-agent-debate <issue or decision to debate>`
+Trigger with: `/multi-agent-debate:multi-agent-debate <issue or decision to debate>`
 
 It also triggers when you ask for one by name: "debate this", "red team", "devil's advocate", "steelman", "argue both sides", "multi-perspective analysis". A plain request for feedback or pros and cons gets a direct answer, not a debate.
 
@@ -107,7 +142,7 @@ It also triggers when you ask for one by name: "debate this", "red team", "devil
 | "Stress-test this idea" | Edge cases and hidden costs surfaced |
 | "Quick take on Python vs Rust for this" | 2-round quick analysis mode |
 
-## Claude Code tools used
+## Capabilities used
 
 | Tool | Purpose |
 |------|---------|
@@ -115,13 +150,16 @@ It also triggers when you ask for one by name: "debate this", "red team", "devil
 | **Read** | Read attached files, reference documents, and skill reference files |
 | **Write** | Export debate transcript to a markdown file |
 
-Debate agents can only produce text. They get a single reply and their tool list holds nothing that writes or runs commands, so they cannot act on anything but the prompt. Only the main orchestrator (Claude) uses tools.
+Participants are instructed to return one text reply without tools. Claude Code
+also limits their registered tool set and turn count. In Codex the parent passes
+the role instructions into a fresh worker; those instructions are not a tool
+sandbox. Only the orchestrator should use tools during the debate.
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────┐
-│         ORCHESTRATOR (Claude / Skill)       │
+│         ORCHESTRATOR (Host / Skill)       │
 │                                             │
 │  1. Build persona prompts per agent         │
 │  2. Dispatch parallel debate-agent calls    │
@@ -155,12 +193,12 @@ The system reads `references/archetypes.md` once when building agents. Agents th
 
 ## Requirements
 
-- Claude Code with the Agent tool available (for spawning parallel subagents)
+- Claude Code or Codex with subagent support for independent participants
 - No API keys, external services, or dependencies needed
 
 ## Design
 
-- Agents are truly independent: separate `debate-agent` subagents with a single reply (`maxTurns: 1`) and no shared context until cross-examination
+- Agents are truly independent: separate `debate-agent` subagents with one requested reply and no inherited conversation context before cross-examination (`maxTurns: 1` is Claude-specific)
 - Minimum 3 agents per debate to avoid simple "for vs against" framing
 - Full debate (3 rounds) or quick analysis (2 rounds)
 - Organized cross-examination where each agent gets a dedicated section per opponent

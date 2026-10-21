@@ -1,0 +1,25 @@
+{
+  "name": "scratchpad",
+  "description": "Context-preserving debugging journal that persists investigation state across sessions.",
+  "version": "1.1.0",
+  "author": {
+    "name": "Ilya"
+  },
+  "repository": "https://github.com/ms-ilya/imaslou-agent-kit",
+  "license": "MIT",
+  "keywords": [
+    "scratchpad",
+    "debugging",
+    "investigation",
+    "context",
+    "journal"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Scratchpad",
+    "shortDescription": "Context-preserving debugging journal",
+    "longDescription": "Context-preserving debugging journal that persists investigation state across sessions.",
+    "developerName": "Ilya Maslau",
+    "category": "Productivity"
+  }
+}

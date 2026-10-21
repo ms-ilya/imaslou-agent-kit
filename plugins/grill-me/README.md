@@ -1,5 +1,39 @@
 # grill-me
 
+Works in **Claude Code and Codex**. Install the complete plugin so its skills,
+references, scripts and agent instructions stay together.
+
+## Installation and invocation
+
+**Claude Code** (inside the Claude Code prompt):
+
+```text
+/plugin marketplace add ms-ilya/imaslou-agent-kit
+/plugin install grill-me@imaslou-agent-kit
+```
+
+**Codex** (in a terminal with a plugin-capable Codex CLI):
+
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add grill-me@imaslou-agent-kit
+```
+
+Start a new session after installation. Invoke `/grill-me:grill-me` in
+Claude Code or `$grill-me` in Codex. The slash examples below use Claude
+Code syntax; Codex uses `$<skill-name>` with the same input and flags. Natural
+language triggers apply only to skills that allow automatic invocation.
+See the [kit installation guide](../../README.md#installation) and the bundled
+[runtime conventions](references/runtime.md) for tool and subagent differences.
+
+Model selection follows your host configuration, including subagent defaults.
+The plugin supplies no model override; workers normally inherit the active
+session's model when no host override applies. You can request a supported
+model explicitly.
+
+This skill requires explicit invocation in both hosts.
+
+
 **A pre-task interview that ends in a written brief and a verdict on whether you
 are ready to start.**
 
@@ -14,20 +48,12 @@ for whichever of those comes next.
 
 ---
 
-## Install
-
-```
-/plugin marketplace add ms-ilya/imaslov-claude-plugins
-/plugin install grill-me
-```
-
-No setup, no config file, no dependency on other plugins.
 
 ## Usage
 
 ```
-/grill-me <what you have: the task, notes, file paths, links>
-/grill-me --fast <what you have>
+/grill-me:grill-me <what you have: the task, notes, file paths, links>
+/grill-me:grill-me --fast <what you have>
 ```
 
 Give it everything you have. It reads the files and links you pass before it asks
@@ -76,7 +102,7 @@ It runs only when you invoke it. It never triggers on its own.
 `docs/briefs/<YYYY-MM-DD>-<slug>.md` in a repository, the working directory
 otherwise, or a path you give. In the default depth it is written after the first
 round and updated every round, so a compaction or a closed session loses nothing.
-Pass an unfinished brief back to `/grill-me` to continue it.
+Pass an unfinished brief back to `/grill-me:grill-me` to continue it.
 
 ```
 Summary              what we know and have
@@ -100,8 +126,8 @@ question and no input moves to "Assumed".
 The two plugins are independent. Together:
 
 ```
-/grill-me <what you have>
-/feature-spec docs/briefs/<date>-<slug>.md
+/grill-me:grill-me <what you have>
+/feature-spec:feature-spec docs/briefs/<date>-<slug>.md
 ```
 
 `feature-spec` reads the brief, checks its claims against the code, and asks only

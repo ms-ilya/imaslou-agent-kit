@@ -6,9 +6,14 @@ description: >-
   findings to a file. Read-only with respect to the audited project. Used
   exclusively by the appstore-audit skill, once per rule category.
 tools: Read, Grep, Glob, Write
-model: sonnet
 maxTurns: 30
 ---
+
+**Host mapping:** This role runs in Claude Code or Codex. Claude uses the
+frontmatter tool/effort settings; Codex receives this body and task inputs from
+the parent and uses its available tools. Model selection follows user and host
+configuration unless the user explicitly requests an override. Preserve the same
+task restrictions. Frontmatter is not a Codex permission boundary.
 
 # ABOUTME: Executes one rule category's catalogue patterns against collected project context and writes graded findings.
 
@@ -26,6 +31,7 @@ Never write, edit or create anything inside the project you are auditing.
 | Input | What it is |
 |---|---|
 | `CATEGORY` | one of safety, performance, business, design, legal |
+| `SCHEMA_FILE` | absolute path to the bundled findings schema |
 | `RULES_FILE` | the catalogue slice for your category |
 | `CONTEXT_FILES` | one JSON file per shipping target, already collected: what that target's own build settings established |
 | `PROJECT_FILE` | what the project holds that is tied to no target: `project` (its root, which every path is relative to), `sources`, `package_manifests`, `all_privacy_manifests` |
@@ -195,7 +201,7 @@ how the carve-out gets written.
 ## Output
 
 Write one JSON object to `OUTPUT_FILE`, matching
-`${CLAUDE_PLUGIN_ROOT}/schemas/finding.schema.json` (read it for the fields of a
+`SCHEMA_FILE` supplied by the parent (read it for the fields of a
 finding and of a checklist item):
 
 ```json

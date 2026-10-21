@@ -1,6 +1,22 @@
-# imaslov-claude-plugins
+# imaslou-agent-kit
 
-Claude Code plugins by Ilya Maslau.
+Plugins and shared agent skills for **Claude Code and OpenAI Codex**, by Ilya Maslau.
+
+Each plugin can be integrated into either environment. The same workflow files
+ship with host-specific marketplace metadata, resource-path guidance and agent
+handoffs. Install the complete plugin; copying a single skill folder can leave
+its shared references or scripts behind.
+
+Examples below use Claude Code’s `/plugin:skill` syntax. In Codex select the
+installed skill or use `$skill-name` with the same input and flags. For example,
+`/ios-comprehensive-review:review-all --base main` becomes `$review-all --base main`.
+Automatic triggers apply only to skills that permit them.
+
+The kit leaves model selection to your host configuration: workers use your
+configured subagent default or inherit the active session's model, subject to
+the host's routing rules. Plugins do not choose a different model for a role.
+You can explicitly request a supported model for a particular task. Existing
+reasoning-effort settings and workflow limits are separate from this policy.
 
 ## Plugins
 
@@ -28,7 +44,7 @@ Step-by-step code review that adjusts depth based on diff size.
 
 | Skill | Trigger |
 |-------|---------|
-| `/ios-quick-review` | "review my code", "review this commit", "check my changes", "find bugs" |
+| `/ios-quick-review:ios-quick-review` | "review my code", "review this commit", "check my changes", "find bugs" |
 
 Auto-triggers only for Swift/iOS codebases.
 
@@ -50,20 +66,20 @@ Multi-agent code review using 5 parallel agents across a 4-stage pipeline. Can r
 
 | Skill | Trigger |
 |-------|---------|
-| `/review-all <PR number>` | "Review PR <number>", "Full iOS review for branch developer against main" |
-| `/review-all --base <branch>` | Review current branch against base |
+| `/ios-comprehensive-review:review-all <PR number>` | "Review PR <number>", "Full iOS review for branch developer against main" |
+| `/ios-comprehensive-review:review-all --base <branch>` | Review current branch against base |
 
-`/review-all` runs all 4 stages in one command with progress tracking.
+`/ios-comprehensive-review:review-all` runs all 4 stages in one command with progress tracking.
 
 Individual stage commands for debugging, partial re-runs, or splitting across sessions:
 
 | Command | Stage |
 |---------|-------|
-| `/review-extract <PR number>` | 1. Extract diff and metadata |
-| `/review-analyze` | 2. Per-file analysis (parallel agents) |
-| `/review-cross-check` | 3. DRY, breaking changes, SOLID |
-| `/review-report` | 4. Generate final report |
-| `/review-cleanup` | Remove intermediate files, keep only report |
+| `/ios-comprehensive-review:review-extract <PR number>` | 1. Extract diff and metadata |
+| `/ios-comprehensive-review:review-analyze` | 2. Per-file analysis (parallel agents) |
+| `/ios-comprehensive-review:review-cross-check` | 3. DRY, breaking changes, SOLID |
+| `/ios-comprehensive-review:review-report` | 4. Generate final report |
+| `/ios-comprehensive-review:review-cleanup` | Remove intermediate files, keep only report |
 
 **Branch mode:** use `--base <branch>` in place of `<PR number>` in extract commands.
 
@@ -121,12 +137,12 @@ Pre-task interview that ends in a written brief and a verdict on whether you are
 
 | Command | What it does |
 |---------|--------------|
-| `/grill-me <what you have>` | In-depth interview: rounds of questions until the answers stop changing the work, then the brief |
-| `/grill-me --fast <what you have>` | The 80/20 version: one round of at most four questions, top risks stated rather than asked |
+| `/grill-me:grill-me <what you have>` | In-depth interview: rounds of questions until the answers stop changing the work, then the brief |
+| `/grill-me:grill-me --fast <what you have>` | The 80/20 version: one round of at most four questions, top risks stated rather than asked |
 
 **Produces:** `docs/briefs/<date>-<slug>.md`
 
-**Stops at the brief.** No implementation, no design, no spec. Hand the brief to `/feature-spec`, plan mode or a fresh session.
+**Stops at the brief.** No implementation, no design, no spec. Hand the brief to `/feature-spec:feature-spec`, plan mode or a fresh session.
 
 **Works with:** any task, code or not; grounds itself in the repository when there is one
 
@@ -141,7 +157,7 @@ Turns what you already have into a critic-verified spec, and a separate command 
 - A decision taken from your document keeps your wording: a script compares each one with the document and fails a paraphrase
 - Asks only about what is still unclear, tracked against a fixed 10-category coverage taxonomy: no round for complete input, two short rounds at most
 - Compaction-proof: every decision is written to a design record **with its reasoning** the moment it is known, so drafting reads the record rather than the conversation
-- Enforces the rules you already wrote down (`AGENTS.md`, `CLAUDE.md`, `.claude/rules/*.md`, project and user level) and ships none of its own; a justified deviation is recorded with the rule quoted verbatim
+- Enforces the rules you already wrote down (applicable project and user instructions supplied by Claude Code or Codex) and ships none of its own; a justified deviation is recorded with the rule quoted verbatim
 - Every requirement, success criterion, scope line and constraint carries a source tag naming where in the record it came from — anything untraceable is cut or marked, never asserted
 - The spec that ships is the draft that was checked: publishing renames the file, so nothing is retyped after the checks ran
 - Proposes competing strategies and records the chosen one *and the rejected ones*, with reasons
@@ -158,12 +174,12 @@ Turns what you already have into a critic-verified spec, and a separate command 
 
 | Command | What it does |
 |---------|--------------|
-| `/feature-spec <idea and/or documents>` | Intake, clarify only what is unclear, strategy, draft, critique, publish |
-| `/feature-spec-plan <slug>` | Turn a finished spec into ordered tasks with milestones, dependencies and quoted done-conditions — then have a critic score the plan |
+| `/feature-spec:feature-spec <idea and/or documents>` | Intake, clarify only what is unclear, strategy, draft, critique, publish |
+| `/feature-spec:feature-spec-plan <slug>` | Turn a finished spec into ordered tasks with milestones, dependencies and quoted done-conditions — then have a critic score the plan |
 
-**Spec flags** (`/feature-spec`): `--resume` (finish a run that stopped) · `--scope <path>` (confine grounding to one directory)
+**Spec flags** (`/feature-spec:feature-spec`): `--resume` (finish a run that stopped) · `--scope <path>` (confine grounding to one directory)
 
-**Plan flags** (`/feature-spec-plan`): `--extend` (keep the existing tasks, add what the spec gained) · `--tasks-only` · `--from-spec <path>` · `--out <dir>`
+**Plan flags** (`/feature-spec:feature-spec-plan`): `--extend` (keep the existing tasks, add what the spec gained) · `--tasks-only` · `--from-spec <path>` · `--out <dir>`
 
 **Produces:** `docs/specs/<date>-<slug>/{spec.md, tree.md, critique.md, traceability.md}`, `plan/{plan.md, tasks/T0N.md, plan-critique.md}` if you run the plan command, `docs/specs/GLOSSARY.md`, and ADRs in `docs/adr/`
 
@@ -190,11 +206,11 @@ Documentation system that records the current state of a project, organized by f
 
 | Skill | What it does |
 |-------|--------------|
-| `/init-memory-bank` | Scan project and create `memory-bank/` with root-level docs |
-| `/update-memory-bank <feature>` | Deep-analyze and generate verified feature docs |
-| `/update-memory-bank-system` | Refresh root-level docs (architecture, deps, WIKI index) |
-| `/add-decision <feature>: <desc>` | Record a technical decision (ADR-style) |
-| `/memory-bank` | Navigate the Memory Bank, route to the right sub-skill |
+| `/memory-bank:init-memory-bank` | Scan project and create `memory-bank/` with root-level docs |
+| `/memory-bank:update-memory-bank <feature>` | Deep-analyze and generate verified feature docs |
+| `/memory-bank:update-memory-bank-system` | Refresh root-level docs (architecture, deps, WIKI index) |
+| `/memory-bank:add-decision <feature>: <desc>` | Record a technical decision (ADR-style) |
+| `/memory-bank:memory-bank` | Navigate the Memory Bank, route to the right sub-skill |
 
 **Works with:** Any language (detects project type automatically; optimized for Swift/iOS)
 
@@ -214,7 +230,7 @@ Debugging notebook that saves investigation notes across sessions.
 
 | Skill | What it does |
 |-------|--------------|
-| `/scratchpad` | Create new, update existing, resolve, abandon, or switch scratchpads |
+| `/scratchpad:scratchpad` | Create new, update existing, resolve, abandon, or switch scratchpads |
 
 Intent is detected from natural language: "resolve", "abandon", "switch." No sub-commands to remember.
 
@@ -230,7 +246,7 @@ Plugins for in-depth analysis, challenging ideas from multiple angles, and findi
 
 Multi-agent debate that analyzes topics from genuinely different perspectives.
 
-- Launches 3-5 independent agents that can only produce text (no file access, no commands)
+- Launches independent participants instructed to produce text without tools; host enforcement differs (see the plugin README)
 - 10 built-in thinking styles give agents distinct personalities and reasoning patterns
 - 3-round debate: Opening Positions, Cross-Examination, Rebuttals (or 2-round quick mode)
 - If agents agree too early after Round 1, the panel is reshuffled to force real disagreement
@@ -241,7 +257,7 @@ Multi-agent debate that analyzes topics from genuinely different perspectives.
 
 | Component | Name | Trigger |
 |-----------|------|---------|
-| Skill | `/multi-agent-debate` | "debate this", "red team", "devil's advocate", "steelman", "argue both sides" |
+| Skill | `/multi-agent-debate:multi-agent-debate` | "debate this", "red team", "devil's advocate", "steelman", "argue both sides" |
 | Agent | `debate-agent` | Spawned automatically by the skill for each participant |
 
 **Works with:** Any topic; technical decisions, strategies, proposals, tradeoffs
@@ -261,7 +277,7 @@ Finds the real cause of bugs and incidents using the 5 Whys method and structure
 
 | Skill | What it does |
 |-------|--------------|
-| `/root-cause-analysis` | Guided analysis with 5 Whys, fishbone diagram, and RCA report |
+| `/root-cause-analysis:root-cause-analysis` | Guided analysis with 5 Whys, fishbone diagram, and RCA report |
 
 **Works with:** Any project; production incidents, repeated bugs, performance issues, post-incident reviews
 
@@ -285,7 +301,7 @@ AI-to-human text converter. 9-step pipeline: Content Intelligence, pattern detec
 
 | Component | Name | Trigger |
 |-----------|------|---------|
-| Skill | `/humanizer` | "humanize this", "de-slop", "sounds like AI", "too robotic", "reads like ChatGPT", "make it sound natural" |
+| Skill | `/humanizer:humanizer` | "humanize this", "de-slop", "sounds like AI", "too robotic", "reads like ChatGPT", "make it sound natural" |
 | Agent | `judge` | Spawned automatically by the skill for long text verification |
 
 **Works with:** Any text in any language; blog posts, documentation, emails, marketing copy, academic writing
@@ -294,16 +310,68 @@ AI-to-human text converter. 9-step pipeline: Content Intelligence, pattern detec
 
 ## Installation
 
-Works identically in the standalone terminal CLI and the VS Code / Cursor extension (Claude Code panel).
+### Codex
 
-### Prerequisites
+With a plugin-capable Codex CLI, run in your terminal:
 
-- **Terminal:** [Claude Code CLI](https://docs.anthropic.com/en/docs/claude-code) installed and authenticated
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add <plugin-name>@imaslou-agent-kit
+```
+
+For a local checkout, use its absolute path instead of the GitHub identifier:
+
+```sh
+codex plugin marketplace add /absolute/path/to/imaslou-agent-kit
+```
+
+Use `codex plugin list --marketplace imaslou-agent-kit` to inspect the catalog,
+or `/plugins` inside the Codex CLI to browse it. Start a new session after
+installing. Desktop marketplace controls vary by version; the repository also
+ships `.agents/plugins/marketplace.json` for hosts that discover repo catalogs.
+This repository is a custom marketplace, not a listing in OpenAI’s public directory.
+
+Install any of the ten plugins listed above, then use its `$skill-name` command.
+For example: `$appstore-audit /path/to/MyApp`, `$feature-spec <idea>`, or
+`$init-memory-bank`. Explicit-only skills stay explicit-only in Codex through
+`agents/openai.yaml`.
+
+The scripts need a Unix shell (macOS, Linux or WSL). `feature-spec` and the App
+Store auditor need Python 3; comprehensive reviews need `jq` and Git, plus
+an authenticated `gh` for PRs. Independent critics and debate participants need
+subagent support. Without it, skills disclose reduced coverage or self-review.
+Model selection follows your host configuration in both environments. Claude's
+automatic skill hooks do not carry over: Codex runs the feature-spec validators
+explicitly.
+
+See [runtime conventions](docs/runtime.md) for the host mapping and
+[compatibility and validation](docs/compatibility.md) for maintainer checks.
+The packaging follows [OpenAI’s plugin documentation](https://developers.openai.com/plugins/build/plugins).
+
+### Claude Code
+
+The commands in this section run inside Claude Code, including its terminal
+CLI and editor panel.
+
+#### Migrating from `imaslov-claude-plugins`
+
+The repository and marketplace are now named `imaslou-agent-kit`. Existing installations use the old marketplace ID and need to be reinstalled under the new one.
+
+1. Note which plugins you have installed and their scopes in `/plugin`.
+2. Remove the old marketplace with `/plugin marketplace remove imaslov-claude-plugins`. This also uninstalls its plugins; save any plugin data or settings you need first.
+3. Add the renamed marketplace with `/plugin marketplace add ms-ilya/imaslou-agent-kit`.
+4. Reinstall your plugins with `/plugin install <plugin-name>@imaslou-agent-kit`, choosing the same scopes as before. Update any project settings that explicitly reference the old marketplace ID.
+
+#### Prerequisites
+
+- **Terminal:** [Claude Code CLI](https://code.claude.com/docs/en/overview) installed and authenticated
 - **VS Code / Cursor:** [Claude Code extension](https://marketplace.visualstudio.com/items?itemName=anthropics.claude-code) installed and signed in
 
-### Visual guide (VS Code / Cursor)
+#### Visual guide (VS Code / Cursor)
 
-#### Step 1: Open plugin manager
+The screenshots show the previous repository name. Use the repository URL and commands written below.
+
+##### Step 1: Open plugin manager
 
 Type `/plugin` in the Claude Code input field and select **Manage plugins**.
 
@@ -311,25 +379,25 @@ Type `/plugin` in the Claude Code input field and select **Manage plugins**.
   <img src="docs/images/install-step1-plugin-command.png" width="600" alt="Type /plugin to open the plugin manager">
 </p>
 
-#### Step 2: Add the marketplace
+##### Step 2: Add the marketplace
 
 Switch to the **Marketplaces** tab. Paste the marketplace URL into the input field and click **Add**:
 
 ```
-https://github.com/ms-ilya/imaslov-claude-plugins.git
+https://github.com/ms-ilya/imaslou-agent-kit.git
 ```
 
 <p align="center">
   <img src="docs/images/install-step2-add-marketplace.png" width="600" alt="Add marketplace URL in the Marketplaces tab">
 </p>
 
-Once added, **imaslov-claude-plugins** appears alongside other marketplaces:
+Once added, **imaslou-agent-kit** appears alongside other marketplaces:
 
 <p align="center">
   <img src="docs/images/install-step3-marketplace-added.png" width="600" alt="Marketplace successfully added">
 </p>
 
-#### Step 3: Install plugins
+##### Step 3: Install plugins
 
 Switch to the **Plugins** tab. All available plugins from the marketplace are listed here. They are sorted by install count, so newly added marketplace plugins will likely appear at the bottom of the list. Scroll down or use the search box to find them.
 
@@ -343,7 +411,7 @@ Click **Install** on any plugin. You will be prompted to choose an installation 
   <img src="docs/images/install-step4-install-plugin.png" width="600" alt="Install plugin with scope selection">
 </p>
 
-#### Step 4: Enable, disable, and manage
+##### Step 4: Enable, disable, and manage
 
 After installation, all plugins appear in the **Plugins** tab with toggle switches. Enable or disable any plugin at any time without uninstalling it. A restart banner appears when changes need to take effect.
 
@@ -351,39 +419,40 @@ After installation, all plugins appear in the **Plugins** tab with toggle switch
   <img src="docs/images/install-step5-plugins-installed.png" width="600" alt="Installed plugins with enable/disable toggles">
 </p>
 
-### Terminal CLI commands
+#### Terminal CLI commands
 
 The same operations are available as CLI commands:
 
 ```bash
 # Step 1: Add the marketplace
-/plugin marketplace add ms-ilya/imaslov-claude-plugins
+/plugin marketplace add ms-ilya/imaslou-agent-kit
 
 # If you've cloned this repo locally, you can add it by path instead:
-/plugin marketplace add ~/downloads/imaslov-claude-plugins
+/plugin marketplace add ~/downloads/imaslou-agent-kit
 
 # Step 2: Install a plugin (user scope — default)
-/plugin install <plugin-name>@imaslov-claude-plugins
+/plugin install <plugin-name>@imaslou-agent-kit
 
 # Install to project scope (shared with team)
-/plugin install <plugin-name>@imaslov-claude-plugins --scope project
+/plugin install <plugin-name>@imaslou-agent-kit --scope project
 ```
 
 **Available plugins:**
 
 | Plugin name | Install command |
 |-------------|----------------|
-| `ios-quick-review` | `/plugin install ios-quick-review@imaslov-claude-plugins` |
-| `ios-comprehensive-review` | `/plugin install ios-comprehensive-review@imaslov-claude-plugins` |
-| `memory-bank` | `/plugin install memory-bank@imaslov-claude-plugins` |
-| `scratchpad` | `/plugin install scratchpad@imaslov-claude-plugins` |
-| `multi-agent-debate` | `/plugin install multi-agent-debate@imaslov-claude-plugins` |
-| `root-cause-analysis` | `/plugin install root-cause-analysis@imaslov-claude-plugins` |
-| `humanizer` | `/plugin install humanizer@imaslov-claude-plugins` |
-| `grill-me` | `/plugin install grill-me@imaslov-claude-plugins` |
-| `feature-spec` | `/plugin install feature-spec@imaslov-claude-plugins` |
+| `ios-quick-review` | `/plugin install ios-quick-review@imaslou-agent-kit` |
+| `ios-comprehensive-review` | `/plugin install ios-comprehensive-review@imaslou-agent-kit` |
+| `memory-bank` | `/plugin install memory-bank@imaslou-agent-kit` |
+| `scratchpad` | `/plugin install scratchpad@imaslou-agent-kit` |
+| `multi-agent-debate` | `/plugin install multi-agent-debate@imaslou-agent-kit` |
+| `root-cause-analysis` | `/plugin install root-cause-analysis@imaslou-agent-kit` |
+| `humanizer` | `/plugin install humanizer@imaslou-agent-kit` |
+| `grill-me` | `/plugin install grill-me@imaslou-agent-kit` |
+| `feature-spec` | `/plugin install feature-spec@imaslou-agent-kit` |
+| `appstore-guideline-auditor` | `/plugin install appstore-guideline-auditor@imaslou-agent-kit` |
 
-### Managing plugins
+#### Managing plugins
 
 ```bash
 # Open the interactive plugin manager
@@ -393,22 +462,22 @@ The same operations are available as CLI commands:
 /plugin marketplace list
 
 # Disable a plugin without uninstalling
-/plugin disable <plugin-name>@imaslov-claude-plugins
+/plugin disable <plugin-name>@imaslou-agent-kit
 
 # Re-enable a disabled plugin
-/plugin enable <plugin-name>@imaslov-claude-plugins
+/plugin enable <plugin-name>@imaslou-agent-kit
 
 # Uninstall a plugin
-/plugin uninstall <plugin-name>@imaslov-claude-plugins
+/plugin uninstall <plugin-name>@imaslou-agent-kit
 
 # Update marketplace listings
-/plugin marketplace update imaslov-claude-plugins
+/plugin marketplace update imaslou-agent-kit
 
 # Reload after changes
 /reload-plugins
 ```
 
-### Scopes
+#### Scopes
 
 | Scope | File | Use case |
 |-------|------|----------|

@@ -1,5 +1,40 @@
 # Humanizer plugin
 
+Works in **Claude Code and Codex**. Install the complete plugin so its skills,
+references, scripts and agent instructions stay together.
+
+## Installation and invocation
+
+**Claude Code** (inside the Claude Code prompt):
+
+```text
+/plugin marketplace add ms-ilya/imaslou-agent-kit
+/plugin install humanizer@imaslou-agent-kit
+```
+
+**Codex** (in a terminal with a plugin-capable Codex CLI):
+
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add humanizer@imaslou-agent-kit
+```
+
+Start a new session after installation. Invoke `/humanizer:humanizer` in
+Claude Code or `$humanizer` in Codex. The slash examples below use Claude
+Code syntax; Codex uses `$<skill-name>` with the same input and flags. Natural
+language triggers apply only to skills that allow automatic invocation.
+See the [kit installation guide](../../README.md#installation) and the bundled
+[runtime conventions](references/runtime.md) for tool and subagent differences.
+
+Model selection follows your host configuration, including subagent defaults.
+The plugin supplies no model override; workers normally inherit the active
+session's model when no host override applies. You can request a supported
+model explicitly.
+
+Independent agent stages require host subagent support. Runs with limited
+delegation report that limitation.
+
+
 ## The problem
 
 AI-generated text has tells. Detectors catch them; careful readers do too. Words like "delve" and "leverage", uniform sentence lengths, neat three-item lists, participial tails on every sentence -- these patterns are statistically abnormal in human writing. Running text through "make it more natural" does not fix the underlying structure.
@@ -8,7 +43,7 @@ This is not limited to English. AI text in any language shares the same statisti
 
 ## The solution
 
-A universal AI-to-human text converter for any language and content type. Claude analyzes the text first (language, content type, voice signals, AI density), then applies universal principles, fixes known patterns, adjusts statistical texture, and verifies the output.
+A universal AI-to-human text converter for any language and content type. The agent analyzes the text first (language, content type, voice signals, AI density), then applies universal principles, fixes known patterns, adjusts statistical texture, and verifies the output.
 
 The goal is not to avoid AI tells. It is to write like a specific human would.
 
@@ -32,14 +67,14 @@ A 9-step pipeline with Content Intelligence, structured self-audit, and verifica
 
 | Component | Name | Purpose |
 |-----------|------|---------|
-| Skill | `/humanizer` | Core rewriting pipeline. Content Intelligence, pattern detection, rewrite, self-audit, verification |
+| Skill | `/humanizer:humanizer` | Core rewriting pipeline. Content Intelligence, pattern detection, rewrite, self-audit, verification |
 | Agent | `judge` | Independent quality evaluator. Scores rewritten text without seeing the editing process |
 
 The skill orchestrates the full pipeline. For long text (over 2000 words), it spawns the judge agent for objective verification. The judge receives only the original and rewritten text, with no editing rationale and no pattern analysis. It evaluates like a skeptical reader would.
 
 **Triggers:** "humanize this", "make it sound human", "de-slop", "sounds like AI", "too robotic", "reads like ChatGPT", "make this less AI", "too polished", "make it sound natural"
 
-Pass text directly: `/humanizer [paste your text]`
+Pass text directly: `/humanizer:humanizer [paste your text]`
 
 It does not start on its own because pasted text looks AI-generated; ask for the rewrite.
 

@@ -1,11 +1,11 @@
 {
   "name": "ios-comprehensive-review",
   "description": "Multi-agent comprehensive iOS/Swift code review with parallel analysis, cross-file checks, and resumable stages.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": {
     "name": "Ilya"
   },
-  "repository": "https://github.com/ms-ilya/imaslov-claude-plugins",
+  "repository": "https://github.com/ms-ilya/imaslou-agent-kit",
   "license": "MIT",
   "keywords": ["ios", "swift", "code-review", "multi-agent", "comprehensive"]
 }

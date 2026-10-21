@@ -72,7 +72,7 @@ Use these patterns when investigating each fishbone category:
 | **Logging** | `log`, `logger`, `console.`, `print`, `debug`, `trace`, `span`, `metric`, `error`, `warn` |
 | **State** | `state`, `store`, `cache`, `session`, `global`, `singleton`, `shared`, `mutable` |
 
-### How to use in Claude Code
+### How to use in Claude Code or Codex
 
 For each relevant category, use the appropriate tools:
 - **Code:** Grep for the function/module involved, trace call chain with Read

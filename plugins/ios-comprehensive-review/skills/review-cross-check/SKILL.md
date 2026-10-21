@@ -3,21 +3,30 @@ name: review-cross-check
 description: Stage 3 of 4 — cross-file iOS/Swift checks of the extracted diff (duplicate functions, breaking API changes, SOLID) with parallel agents. Run review-extract first; review-all runs every stage.
 disable-model-invocation: true
 allowed-tools:
+  - Read
   - Agent
   - Bash(jq *)
 ---
 
-## Pre-loaded Context
+## Load context explicitly
 
-Functions: !`jq '[.changed_files[] | .new_symbols[] | select(.type == "function")] | length' .ios-review-temp/pr-context.json 2>/dev/null || echo "0"`
-Types: !`jq '[.changed_files[] | .new_symbols[] | select(.type != "function" and .type != "property")] | length' .ios-review-temp/pr-context.json 2>/dev/null || echo "0"`
-Signatures: !`jq '.signature_changes | length' .ios-review-temp/pr-context.json 2>/dev/null || echo "0"`
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
+Run this through the host's shell tool in the project directory:
+
+```bash
+jq -e '.changed_files | type == "array"' .ios-review-temp/pr-context.json
+```
+
+If the file is absent, malformed, or the command fails, report the error and
+stop; run `review-extract` before this stage. A missing context is not an empty
+diff. No inline shell expansion is required from the host.
 
 ## EXECUTION
 
 ### 1. Load Context
 
-If ALL pre-loaded counts are 0: report "No cross-file analysis needed (no new functions, types, or signature changes)" → exit.
+Count functions, types and signature changes from the context. If ALL counts are 0: report "No cross-file analysis needed (no new functions, types, or signature changes)" → exit.
 
 Extract detailed data as needed:
 
@@ -44,7 +53,7 @@ If all exist: report "All cross-checks already complete" → exit.
 
 ### 3. Spawn Agents
 
-Spawn ALL applicable agents (not already complete) in ONE message:
+Spawn ALL applicable agents (not already complete) concurrently up to the available worker limit:
 
 ```
 Agent(subagent_type: "ios-comprehensive-review:dry-analyzer",
@@ -66,7 +75,7 @@ Report: `Spawned N cross-check agents`
 
 ### 4. Collect Results
 
-Subagents run in the background and each one reports back on its own when it finishes. Wait until every spawned agent has reported; do not poll, sleep, or read their transcripts. Their findings are in the output files, not in the reports.
+Subagents run in the background and each one reports back on its own when it finishes. Wait until every spawned agent has reported; use the host’s completion notifications or wait tool; do not busy-poll or read their transcripts. Their findings are in the output files, not in the reports.
 
 Then `ls .ios-review-temp/` and re-spawn once any agent whose output file is missing. One still missing after its second attempt is `failed`.
 

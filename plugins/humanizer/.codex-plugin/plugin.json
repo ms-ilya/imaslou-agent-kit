@@ -1,0 +1,27 @@
+{
+  "name": "humanizer",
+  "description": "Universal AI-to-human text converter for any language. Priority-tiered pattern detection, statistical texture, voice anchoring, anti-hallucination guardrails, two-pass adversarial self-audit, and independent judge agent verification.",
+  "version": "1.1.0",
+  "author": {
+    "name": "Ilya"
+  },
+  "repository": "https://github.com/ms-ilya/imaslou-agent-kit",
+  "license": "MIT",
+  "keywords": [
+    "humanizer",
+    "writing",
+    "ai-detection",
+    "editing",
+    "text",
+    "rewriting",
+    "de-slop"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Humanizer",
+    "shortDescription": "Remove AI writing patterns from text",
+    "longDescription": "Universal AI-to-human text converter for any language. Priority-tiered pattern detection, statistical texture, voice anchoring, anti-hallucination guardrails, two-pass adversarial self-audit, and independent judge agent verification.",
+    "developerName": "Ilya Maslau",
+    "category": "Productivity"
+  }
+}

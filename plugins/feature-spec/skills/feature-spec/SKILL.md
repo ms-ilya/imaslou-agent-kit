@@ -27,6 +27,8 @@ hooks:
 
 # ABOUTME: Turns the user's input into a critic-verified feature spec — intake, clarify only what is unclear, strategy, draft, critique, publish.
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 You turn what the user already has into a verified feature spec: take in their
 input → build the design record → ask only about what is still unclear → choose a
 strategy → promote decisions → draft → critique → publish.
@@ -35,12 +37,8 @@ The run adapts to the input. A complete brief needs no interview and goes
 straight through. A bare idea gets up to two short rounds. You stop at the spec:
 no implementation, no task breakdown, no estimates.
 
-Everything you need is here or in the references directory,
-`${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/`. A reference file named
-below without a path is in it. Those files write the plugin's install directory
-as a `CLAUDE_PLUGIN_ROOT` variable, which is filled in only on this page: it is
-`${CLAUDE_PLUGIN_ROOT}`. Put that path in wherever a reference shows a file or a
-command.
+References live in `<skill-dir>/references/`. A reference named below without
+a path is in that directory. Resolve all paths using the runtime conventions.
 
 **Input:** `$ARGUMENTS`
 
@@ -86,7 +84,13 @@ with `--resume`.
 A run is in progress while `<specdir>/spec.draft.md` exists and finished once
 only `spec.md` does.
 
-A `PostToolUse` hook checks every write to the record and the draft. It checks
+In Claude Code, a `PostToolUse` hook checks every write to the record and draft.
+In Codex, after each write run the matching closed-world check yourself:
+
+- `bash "<plugin-root>/scripts/check-tree.sh" <specdir>/tree.md --closed-world`
+- `bash "<plugin-root>/scripts/check-spec.sh" <draft> --tree <specdir>/tree.md --closed-world`
+
+Run these checks before continuing to the next workflow step. They check
 what you wrote, never what you have not written yet, so a half-written record
 passes and a fabricated citation fails at any stage. Run the scripts yourself at
 the points named below: that is where completeness is required. A finding from a
@@ -109,7 +113,7 @@ to establish, not how; how deep to search is a judgement about this repository.
 | Glossary | `<spec root>/GLOSSARY.md` | never overridden. An existing root glossary or `memory-bank/` is read and linked, never written |
 | ADR directory | `docs/adr/` | existing `docs/adr/`, `docs/adrs/`, `adr/` |
 | Stack layer | none | within the feature's scope (`--scope`, or the directories the input names), by content: `.swift`, `Package.swift`, `*.xcodeproj`, `*.xcworkspace` → `swift` · `tsconfig.json`, `.ts`, `.tsx` → `typescript` · `pyproject.toml`, `requirements.txt`, `.py` → `python`. A layer is for an application in that stack: a shell script that embeds Python, or a build file, loads none. When unsure, none |
-| Principles | none | the project's `AGENTS.md`, `CLAUDE.md` and `.claude/rules/*.md`, then the user's own `AGENTS.md`, `CLAUDE.md` and `rules/*.md` under `~/.claude/` (read them by absolute path; skip them and say so if you cannot tell where home is). Project rules win where the two disagree. A rules file for a language this feature does not touch is not in force |
+| Principles | none | instructions already supplied by the host, then applicable project `AGENTS.md` / `AGENTS.override.md`, `CLAUDE.md` and conditional rule files. In Claude Code include applicable user instructions under `~/.claude/`; in Codex include the host-provided global instructions (normally under `~/.codex/`, or its configured home). Follow the host’s precedence and directory scope; do not activate unrelated language rules or load another host’s personal settings as instructions |
 | Version control | — | whether a `.git` directory sits at or above the spec root. An amendment replaces `spec.md`, so without history the previous version is gone: say so before amending |
 
 An existing slug offers three choices (R15):
@@ -145,7 +149,7 @@ Sort what each document says, and what the request itself says:
 - **A decision the user made** becomes a `## Settled` entry tagged `(r0)`. The
   answer keeps the input's own wording. Its `*Why:*` ends with where it came
   from: the document's path as `## Reads` lists it and the section, or "stated
-  in the request". The hook holds the answer against that document and fails a
+  in the request". The validator holds the answer against that document and fails a
   paraphrase, because the entry is what every requirement is later compared
   with.
 - **A claim about the repository** is something to verify, not to believe. A
@@ -171,25 +175,28 @@ for what lies beyond it: other files, call sites, conventions, whether something
 exists. Do not send a question you have already answered.
 
 Dispatch fact-finders in **one message** so they run together: one for
-questions a search settles (a path, a name, whether something exists; pass
-`model: haiku`) and one for questions that need code read and understood (the
-agent's default model). Dispatch only the kind you have questions for, and none
-when there is no code to ground in. Each gets specific questions, any claims
-the input makes to grade as confirmed, contradicted or unverifiable, and the
-scope path when there is one. Never "sweep the repo". Keep a dispatch to about six questions and
-claims; an agent given more runs out of turns and returns nothing, so split a
-longer list across a second dispatch of the same kind.
+questions a search settles (a path, a name, whether something exists) and one
+for questions that need code read and understood. Use `feature-spec:fact-finder`
+in Claude Code; in Codex load `<plugin-root>/agents/fact-finder.md` into a fresh
+worker. Let the host resolve the model for either kind under the runtime policy.
+Dispatch only the kind you have questions for, and none when there is no code to
+ground in. Each gets specific questions, any claims the input makes to grade as
+confirmed, contradicted or unverifiable, and the scope path when there is one.
+Never "sweep the repo". Keep a dispatch to about six questions and claims; an
+agent given more runs out of turns and returns nothing, so split a longer list
+across a second dispatch of the same kind.
 
 A return that does not contain `Q:` / `FACT:` / `EVIDENCE:` / `CONFIDENCE:` /
-`NOT_FOUND:`, plus `VERDICT:` for a claim, is not an answer. `SendMessage` the
-agent once asking for the report in the schema, and only then treat the dispatch
-as failed.
+`NOT_FOUND:`, plus `VERDICT:` for a claim, is not an answer. Continue the worker
+once with the host's follow-up/resume tool, asking for the report in the schema,
+and only then treat the dispatch as failed. A message that does not start a
+new turn is not a retry.
 
 Read the glossary, the ADR directory and the principles files yourself: they are
 small and needed verbatim.
 
 Add `## Grounding facts` and `## Principles in force` to the record. A fact
-cites its `path:line` from the repository root; the hook fails a citation that
+cites its `path:line` from the repository root; the validator fails a citation that
 points at no file. Before you tell the user their document is wrong, open the
 cited line yourself: a contradicted claim is the most valuable thing this phase
 produces, and the one that costs most when it is mistaken.
@@ -225,7 +232,7 @@ Load `coverage-taxonomy.md` and `frontier.md`.
    first.
 6. Re-score coverage and update `Round` and `## Sessions`.
 7. Validate, and fix until clean:
-   `bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-tree.sh <specdir>/tree.md`
+   `bash "<plugin-root>/scripts/check-tree.sh" <specdir>/tree.md`
 
 A second round runs only if a category is still Missing or a high-impact question
 is still open. After two rounds, everything left moves to `## Deferred`. A
@@ -243,8 +250,10 @@ When no round ran, run `check-tree.sh` once here before going on.
 Skipped when exactly one approach is viable. Say so to the user, with the
 reason (R16), and leave `## Strategy` out of the record.
 
-Otherwise propose 2–3 approaches with their trade-offs. Use `AskUserQuestion`
-with `preview` blocks of at most 12 lines that show shape, not code. Record the
+Otherwise propose 2–3 approaches with their trade-offs. Use the host’s question
+tool. In Claude Code, `preview` blocks of at most 12 lines can show shape, not
+code. In Codex, put the same comparison in supported question text or chat; do
+not send unsupported `preview` or `multiSelect` fields. Record the
 chosen approach and the rejected ones, with reasons.
 
 If the choice is contested and hard to reverse, point at `/multi-agent-debate`.
@@ -268,17 +277,18 @@ and says no more than that entry says.
 
 ## Scripts
 
-Run each as `bash <script> …`, the form the grants cover. Do not reimplement
+Run each as `bash "<absolute-script-path>" …`, quoting path arguments. Claude
+Code grants cover the bundled scripts; Codex uses its normal shell permissions. Do not reimplement
 their checks in prose.
 
 | Script | When |
 |---|---|
-| `${CLAUDE_PLUGIN_ROOT}/scripts/check-tree.sh <tree.md>` | end of Phase 2, and after every round |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/check-tree.sh <tree.md> --doctor` | only when the record will not parse; it names the broken section |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/check-spec.sh <draft> --tree <tree.md> [--prev <spec being amended>]` | after drafting, before the critic |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/make-packet.sh <draft> --tree <tree.md> --out <specdir>/.work/critic-packet.md [--pass1 <first reply>]` | Phase 6; the critic reads the file |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/check-critique.sh <reply> --single --packet <packet>` · `<reply 1> <reply 2> --packet <packet>` | after each critic pass, and to reconcile the two |
-| `${CLAUDE_PLUGIN_ROOT}/scripts/publish-spec.sh <specdir> [--allow-reword \| --fresh]` | Phase 7; turns the checked draft into `spec.md` and writes `traceability.md` |
+| `<plugin-root>/scripts/check-tree.sh <tree.md>` | end of Phase 2, and after every round |
+| `<plugin-root>/scripts/check-tree.sh <tree.md> --doctor` | only when the record will not parse; it names the broken section |
+| `<plugin-root>/scripts/check-spec.sh <draft> --tree <tree.md> [--prev <spec being amended>]` | after drafting, before the critic |
+| `<plugin-root>/scripts/make-packet.sh <draft> --tree <tree.md> --out <specdir>/.work/critic-packet.md [--pass1 <first reply>]` | Phase 6; the critic reads the file |
+| `<plugin-root>/scripts/check-critique.sh <reply> --single --packet <packet>` · `<reply 1> <reply 2> --packet <packet>` | after each critic pass, and to reconcile the two |
+| `<plugin-root>/scripts/publish-spec.sh <specdir> [--allow-reword \| --fresh]` | Phase 7; turns the checked draft into `spec.md` and writes `traceability.md` |
 
 ## References
 

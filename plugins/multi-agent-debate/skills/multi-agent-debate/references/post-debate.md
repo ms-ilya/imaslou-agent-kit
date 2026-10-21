@@ -30,7 +30,7 @@ User introduces a new constraint or objection:
 
 Define a new agent persona to fill a gap:
 
-1. Build the new agent's profile (Name, Role, Emoji, Lens, Core assumption, Blind spot). Check `${CLAUDE_SKILL_DIR}/references/archetypes.md` — if an archetype fits the new agent's intended role and does not duplicate an archetype already in the panel, assign it.
+1. Build the new agent's profile (Name, Role, Emoji, Lens, Core assumption, Blind spot). Check `<skill-dir>/references/archetypes.md` — if an archetype fits the new agent's intended role and does not duplicate an archetype already in the panel, assign it.
 2. The new agent receives: the original issue + Round 3 rebuttals + the Judge's verdict
 3. The new agent produces a "late entry" statement (200-250 words)
 4. Dispatch existing agents in parallel for a mini cross-examination of the new agent (100-150 words each)
@@ -40,4 +40,4 @@ Define a new agent persona to fill a gap:
 
 ## Option 4: "Export"
 
-Read the export template from `${CLAUDE_SKILL_DIR}/references/export-template.md` and use the Write tool to generate the debate transcript as a structured markdown file. Save as `debate-[topic-slug].md` in the current working directory.
+Read the export template from `<skill-dir>/references/export-template.md` and use the Write tool to generate the debate transcript as a structured markdown file. Save as `debate-[topic-slug].md` in the current working directory.

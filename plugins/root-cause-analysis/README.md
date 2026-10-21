@@ -1,18 +1,50 @@
 # Root cause analysis plugin
 
+Works in **Claude Code and Codex**. Install the complete plugin so its skills,
+references, scripts and agent instructions stay together.
+
+## Installation and invocation
+
+**Claude Code** (inside the Claude Code prompt):
+
+```text
+/plugin marketplace add ms-ilya/imaslou-agent-kit
+/plugin install root-cause-analysis@imaslou-agent-kit
+```
+
+**Codex** (in a terminal with a plugin-capable Codex CLI):
+
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add root-cause-analysis@imaslou-agent-kit
+```
+
+Start a new session after installation. Invoke `/root-cause-analysis:root-cause-analysis` in
+Claude Code or `$root-cause-analysis` in Codex. The slash examples below use Claude
+Code syntax; Codex uses `$<skill-name>` with the same input and flags. Natural
+language triggers apply only to skills that allow automatic invocation.
+See the [kit installation guide](../../README.md#installation) and the bundled
+[runtime conventions](references/runtime.md) for tool and subagent differences.
+
+Model selection follows your host configuration, including subagent defaults.
+The plugin supplies no model override; workers normally inherit the active
+session's model when no host override applies. You can request a supported
+model explicitly.
+
+
 ## The problem
 
 When things break, the natural reaction is to fix what you see. A service crashes; restart it. A query is slow; add a cache. The same problems recur because nobody traced the real cause.
 
 ## What this does
 
-An investigation tool that uses Claude Code to trace from symptom to root cause. It reads code, searches for patterns, checks git history, runs parallel investigations, and builds a chain of evidence using the 5 Whys technique.
+An investigation tool that uses Claude Code or Codex to trace from symptom to root cause. It reads code, searches for patterns, checks git history, runs parallel investigations, and builds a chain of evidence using the 5 Whys technique.
 
-Claude follows dependency chains and determines what went wrong. The output is a verified report with confidence ratings and fixes at three levels: immediate, short-term, and long-term.
+The agent follows dependency chains and determines what went wrong. The output is a verified report with confidence ratings and fixes at three levels: immediate, short-term, and long-term.
 
 ## How it works
 
-Claude runs a 4-phase investigation. It states its scope and what it found as it goes, and stops to ask only when your answer changes what it does next.
+The agent runs a 4-phase investigation. It states its scope and what it found as it goes, and stops to ask only when your answer changes what it does next.
 
 ```
 Phase 0: Understand the Symptom  →  Clarify an unclear symptom, state the scope and proceed
@@ -55,9 +87,9 @@ Every finding is checked against the actual codebase:
 
 | Skill | Trigger | What it does |
 |-------|---------|--------------|
-| `/root-cause-analysis` | "root cause analysis", "RCA", "postmortem", "what's the root cause of this regression / incident / flaky test" | Evidence-backed root cause investigation. Ordinary "fix this bug" requests are left to normal debugging |
+| `/root-cause-analysis:root-cause-analysis` | "root cause analysis", "RCA", "postmortem", "what's the root cause of this regression / incident / flaky test" | Evidence-backed root cause investigation. Ordinary "fix this bug" requests are left to normal debugging |
 
-You can pass arguments too: `/root-cause-analysis <description of the symptom>`
+You can pass arguments too: `/root-cause-analysis:root-cause-analysis <description of the symptom>`
 
 ### Examples
 
@@ -70,7 +102,7 @@ You can pass arguments too: `/root-cause-analysis <description of the symptom>`
 | "This test is flaky, figure out why" | Standard scope - race condition analysis, environment check |
 | "Why does this work locally but fail in CI?" | Standard scope - environment-dependent investigation |
 
-## Claude Code tools used
+## Capabilities used
 
 | Tool | Purpose |
 |------|---------|

@@ -1,6 +1,6 @@
 {
-  "name": "imaslov-claude-plugins",
-  "description": "Claude Code plugins by Ilya Maslau: iOS/Swift code review, App Store guideline audits, pre-task interviews and feature specs, root cause analysis, debugging journals, project documentation, multi-agent debate, and AI-text humanizing.",
+  "name": "imaslou-agent-kit",
+  "description": "Plugins for Claude Code and Codex by Ilya Maslau: iOS/Swift code review, App Store guideline audits, pre-task interviews and feature specs, root cause analysis, debugging journals, project documentation, multi-agent debate, and AI-text humanizing.",
   "owner": {
     "name": "Ilya Maslau"
   },

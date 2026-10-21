@@ -3,13 +3,13 @@
 Loaded at Phase 5. The input to everything below is `tree.md` and the files its
 `## Reads` names: not the conversation, not `## History`.
 
-Commands are written with `${CLAUDE_PLUGIN_ROOT}`. `SKILL.md` gives its value.
+Commands are written with `<plugin-root>`. `SKILL.md` gives its value.
 
 ---
 
 ## Phase 5 — DRAFT
 
-Load `${CLAUDE_PLUGIN_ROOT}/skills/feature-spec/references/spec-template.md`. It
+Load `<plugin-root>/skills/feature-spec/references/spec-template.md`. It
 is instructions, not content to copy.
 
 Write the draft to `<specdir>/spec.draft.md`. `spec.md` is never written by
@@ -47,7 +47,7 @@ checked and critiqued.
 Then fix until clean:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-spec.sh <specdir>/spec.draft.md --tree <specdir>/tree.md
+bash "<plugin-root>/scripts/check-spec.sh" <specdir>/spec.draft.md --tree <specdir>/tree.md
 ```
 
 The script resolves every source tag against the record: `Settled Q7` has to be
@@ -66,7 +66,7 @@ either way.
 One `spec-critic` agent runs all three lenses, on a packet the script builds:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/make-packet.sh <specdir>/spec.draft.md --tree <specdir>/tree.md --out <specdir>/.work/critic-packet.md
+bash "<plugin-root>/scripts/make-packet.sh" <specdir>/spec.draft.md --tree <specdir>/tree.md --out <specdir>/.work/critic-packet.md
 ```
 
 Dispatch the critic with one line: the absolute path of the packet, and that the
@@ -78,7 +78,7 @@ state and ignores itself in version control; leave it where it is.
 Save the critic's reply verbatim as `<specdir>/critique.md`, then validate it:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-critique.sh <specdir>/critique.md --single --packet <specdir>/.work/critic-packet.md
+bash "<plugin-root>/scripts/check-critique.sh" <specdir>/critique.md --single --packet <specdir>/.work/critic-packet.md
 ```
 
 The script checks the reply's shape, that a clean verdict names what it
@@ -91,13 +91,13 @@ in the packet is not acted on, and the report says so.
 the critic once more on a packet that carries the first pass:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/make-packet.sh <specdir>/spec.draft.md --tree <specdir>/tree.md --pass1 <specdir>/critique.md --out <specdir>/.work/critic-packet.md
+bash "<plugin-root>/scripts/make-packet.sh" <specdir>/spec.draft.md --tree <specdir>/tree.md --pass1 <specdir>/critique.md --out <specdir>/.work/critic-packet.md
 ```
 
 Save that reply as `<specdir>/critique.pass2.md` and reconcile the two:
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-critique.sh <specdir>/critique.md <specdir>/critique.pass2.md --packet <specdir>/.work/critic-packet.md
+bash "<plugin-root>/scripts/check-critique.sh" <specdir>/critique.md <specdir>/critique.pass2.md --packet <specdir>/.work/critic-packet.md
 ```
 
 It asserts the second pass says what became of every blocking finding the first
@@ -115,7 +115,7 @@ stop the run. Publish without a critique and say so.
 ## Phase 7 — PUBLISH AND REPORT
 
 ```
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/publish-spec.sh <specdir>
+bash "<plugin-root>/scripts/publish-spec.sh" <specdir>
 ```
 
 It runs the full check on the draft one last time, renames the draft to

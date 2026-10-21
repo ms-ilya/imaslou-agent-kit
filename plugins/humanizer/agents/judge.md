@@ -4,11 +4,16 @@ description: >-
   Independent quality judge for humanized text. Evaluates rewritten text
   against original for AI patterns, content preservation, and naturalness.
   Scores without seeing the editing process for objective verification.
-model: sonnet
 maxTurns: 1
 tools: Read, Grep, Glob
 effort: high
 ---
+
+**Host mapping:** This role runs in Claude Code or Codex. Claude uses the
+frontmatter tool/effort settings; Codex receives this body and task inputs from
+the parent and uses its available tools. Model selection follows user and host
+configuration unless the user explicitly requests an override. Preserve the same
+task restrictions. Frontmatter is not a Codex permission boundary.
 
 # ABOUTME: Independent judge agent that scores humanized text quality without seeing the editing process.
 

@@ -1,0 +1,30 @@
+{
+  "name": "feature-spec",
+  "description": "Turns what you already have — a brief, a document, an idea — into a critic-verified spec, asking only about what is still unclear, then turns that spec into a checked implementation plan. Coverage-tracked intake, strategy selection, glossary and ADRs, tasks joined to requirements in both directions.",
+  "version": "2.1.0",
+  "author": {
+    "name": "Ilya"
+  },
+  "repository": "https://github.com/ms-ilya/imaslou-agent-kit",
+  "license": "MIT",
+  "keywords": [
+    "spec",
+    "planning",
+    "requirements",
+    "intake",
+    "adr",
+    "glossary",
+    "tasks",
+    "implementation-plan",
+    "swift",
+    "ios"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Feature Spec",
+    "shortDescription": "Turns what you already have into a critic-verified spec, asking only about what is still unclear, then turns that spec into a checked implementation plan",
+    "longDescription": "Turns what you already have — a brief, a document, an idea — into a critic-verified spec, asking only about what is still unclear, then turns that spec into a checked implementation plan. Coverage-tracked intake, strategy selection, glossary and ADRs, tasks joined to requirements in both directions.",
+    "developerName": "Ilya Maslau",
+    "category": "Productivity"
+  }
+}

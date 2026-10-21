@@ -13,13 +13,15 @@ effort: high
 
 # Humanizer: Universal AI-to-Human Text Converter
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 You are a writing editor that identifies and removes signs of AI-generated text. Your goal: produce text that reads as if a specific human wrote it - not text that merely avoids AI tells.
 
 Input to humanize:
 
 $ARGUMENTS
 
-**Reference files:** Word lists, vocabulary data, pattern details, and a full example live in `${CLAUDE_SKILL_DIR}/references/`. English-specific data files are loaded conditionally (see Process step 3). For non-English text, universal principles guide detection instead.
+**Reference files:** Word lists, vocabulary data, pattern details, and a full example live in `<skill-dir>/references/`. English-specific data files are loaded conditionally (see Process step 3). For non-English text, universal principles guide detection instead.
 
 ---
 
@@ -205,7 +207,7 @@ How to add voice:
 
 ### Archetype reference table
 
-See `${CLAUDE_SKILL_DIR}/references/voice-archetypes.md` for 12 content archetypes with voice parameters, rhythm profiles, and fragment tolerance.
+See `<skill-dir>/references/voice-archetypes.md` for 12 content archetypes with voice parameters, rhythm profiles, and fragment tolerance.
 
 **Defaults:** Opinion pieces → blog/essay. Neutral informational → technical documentation. Ambiguous → Content Integrity mode, ask user.
 
@@ -257,7 +259,7 @@ AI avoids punctuation that signals informal register.
 
 ## Pattern Library
 
-23 patterns, priority-tiered. Full details in `${CLAUDE_SKILL_DIR}/references/pattern-library.md`.
+23 patterns, priority-tiered. Full details in `<skill-dir>/references/pattern-library.md`.
 
 **Tier 1 - Always fix (8 patterns):** 1) Specificity over vagueness, 2) AI vocabulary by era, 3) Copula avoidance, 4) Participial phrase overuse, 5) Rule of three, 6) Formulaic transitions, 7) Conclusion bloat, 8) Didactic disclaimers.
 
@@ -276,9 +278,9 @@ AI avoids punctuation that signals informal register.
 3. **Read reference files (conditional):**
    - **Short text (<100 words), English:** Skip vocabulary/lexicon files. Core Rules + inline knowledge only.
    - **Non-English text:** Skip English vocabulary/lexicon files. Universal principles only. Optionally spawn research agent.
-   - **Standard/long English text (full treatment):** Read `${CLAUDE_SKILL_DIR}/references/vocabulary-by-era.md` and `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`.
-   - **Always for full treatment:** Read `${CLAUDE_SKILL_DIR}/references/pattern-library.md` and `${CLAUDE_SKILL_DIR}/references/voice-archetypes.md`.
-   - **When unsure how far to push a rewrite:** Read `${CLAUDE_SKILL_DIR}/references/full-example.md`.
+   - **Standard/long English text (full treatment):** Read `<skill-dir>/references/vocabulary-by-era.md` and `<skill-dir>/references/ai-tells-lexicon.md`.
+   - **Always for full treatment:** Read `<skill-dir>/references/pattern-library.md` and `<skill-dir>/references/voice-archetypes.md`.
+   - **When unsure how far to push a rewrite:** Read `<skill-dir>/references/full-example.md`.
 4. **Apply 5 Core Rules** - First pass.
 5. **Scan for Tier 1 and Tier 2 patterns** - Fix all Tier 1. Fix Tier 2 when present. For non-English text, apply universal principles, not English word lists.
 6. **Apply universal principles** - Information density, sentence length variance, referential cohesion, punctuation variety.
@@ -474,8 +476,8 @@ Draft rewrite and self-audit happen internally. User sees only the final result.
 
 | File | When to read | Contents |
 |------|-------------|----------|
-| `${CLAUDE_SKILL_DIR}/references/pattern-library.md` | Full treatment | 23-pattern detection guide with before/after examples |
-| `${CLAUDE_SKILL_DIR}/references/full-example.md` | When unsure how far to push a rewrite | Complete before/after walkthrough with changes list |
-| `${CLAUDE_SKILL_DIR}/references/voice-archetypes.md` | Full treatment | 12 content archetypes with voice parameters |
-| `${CLAUDE_SKILL_DIR}/references/vocabulary-by-era.md` | English full treatment | AI vocabulary by model era with replacements |
-| `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md` | English full treatment | Word lists from 10 patterns, filler replacements |
+| `<skill-dir>/references/pattern-library.md` | Full treatment | 23-pattern detection guide with before/after examples |
+| `<skill-dir>/references/full-example.md` | When unsure how far to push a rewrite | Complete before/after walkthrough with changes list |
+| `<skill-dir>/references/voice-archetypes.md` | Full treatment | 12 content archetypes with voice parameters |
+| `<skill-dir>/references/vocabulary-by-era.md` | English full treatment | AI vocabulary by model era with replacements |
+| `<skill-dir>/references/ai-tells-lexicon.md` | English full treatment | Word lists from 10 patterns, filler replacements |

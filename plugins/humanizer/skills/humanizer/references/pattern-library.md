@@ -9,7 +9,7 @@ Each pattern below is an **English manifestation** of a universal AI behavior. T
 
 This is not a closed list. These are the most common and well-documented patterns as of current research. For non-English text, apply the universal principle line and reason about how that behavior manifests in the target language - don't force English word lists onto other languages.
 
-**Inline vs. referenced split:** Patterns with short, stable word lists (3, 5, 10, 12-15, 18, 20-23) keep lists inline. Patterns with large or era-specific word lists (1, 2, 4, 6, 7, 8, 9, 11, 16, 17, 19) point to reference files in `${CLAUDE_SKILL_DIR}/references/`. When adding a new pattern, choose inline if the word list is under ~10 items and stable; choose reference file if it will grow or needs era tagging.
+**Inline vs. referenced split:** Patterns with short, stable word lists (3, 5, 10, 12-15, 18, 20-23) keep lists inline. Patterns with large or era-specific word lists (1, 2, 4, 6, 7, 8, 9, 11, 16, 17, 19) point to reference files in `<skill-dir>/references/`. When adding a new pattern, choose inline if the word list is under ~10 items and stable; choose reference file if it will grow or needs era tagging.
 
 ## TIER 1: Always fix
 
@@ -26,7 +26,7 @@ This principle consolidates four related AI habits. Check for all of them:
 - **c) Vague attributions** - "Experts believe," "Industry reports suggest," "Some critics argue." Replace with who said it and when, or cut.
 - **d) Promotional puffery** - "nestled," "vibrant," "breathtaking," "groundbreaking." Replace with concrete description.
 
-**Words to watch:** See Pattern 1 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md` for the full list (significance inflation, promotional puffery, vague attributions).
+**Words to watch:** See Pattern 1 in `<skill-dir>/references/ai-tells-lexicon.md` for the full list (significance inflation, promotional puffery, vague attributions).
 
 **Rule:** Replace vague importance-claims with specific facts. Replace "Experts believe X" with who said it and when. Replace "nestled in a breathtaking region" with the actual geography.
 
@@ -42,7 +42,7 @@ This principle consolidates four related AI habits. Check for all of them:
 
 These words appear at statistically abnormal rates in AI text. They shift over time as models update.
 
-**Vocabulary lists and replacements:** Read `${CLAUDE_SKILL_DIR}/references/vocabulary-by-era.md` for the full era-tagged word lists with plain alternatives.
+**Vocabulary lists and replacements:** Read `<skill-dir>/references/vocabulary-by-era.md` for the full era-tagged word lists with plain alternatives.
 
 **Rule:** Replace with plain alternatives. "Additionally" becomes "also" or nothing. "Delve" becomes "look at" or "examine." "Leverage" becomes "use." "Facilitate" becomes "help" or "enable." Most of these words can simply be cut.
 
@@ -63,7 +63,7 @@ These words appear at statistically abnormal rates in AI text. They shift over t
 
 AI uses "X, doing Y" constructions at 2-5x the human rate.
 
-**Words to watch:** Sentence-ending participial tails - see Pattern 4 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`.
+**Words to watch:** Sentence-ending participial tails - see Pattern 4 in `<skill-dir>/references/ai-tells-lexicon.md`.
 
 **Rule:** If a sentence ends with a participial phrase, either make it a separate sentence or cut it. Most participial tails are filler.
 
@@ -84,7 +84,7 @@ AI uses "X, doing Y" constructions at 2-5x the human rate.
 
 **Universal principle:** AI uses stock bridge phrases between ideas instead of letting the logical connection speak for itself. Every language has its own set of AI-overused transition phrases - in English they're "That said," "Moving on," etc.; in other languages, look for the equivalent mechanical connectors.
 
-**Words to watch:** See Pattern 6 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`.
+**Words to watch:** See Pattern 6 in `<skill-dir>/references/ai-tells-lexicon.md`.
 
 **Rule:** Cut the transition. Start the next thought directly. The connection is usually obvious without a bridge phrase.
 
@@ -92,7 +92,7 @@ AI uses "X, doing Y" constructions at 2-5x the human rate.
 
 **Universal principle:** AI summarizes what it already said in a concluding paragraph. Human writers end when the content ends - the last paragraph carries new information or a specific forward-looking statement, not a recap.
 
-**Words to watch:** See Pattern 7 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`. Also: any final paragraph that restates everything already said.
+**Words to watch:** See Pattern 7 in `<skill-dir>/references/ai-tells-lexicon.md`. Also: any final paragraph that restates everything already said.
 
 **Rule:** End when the content ends. Don't summarize. Don't write an "in conclusion" paragraph. The last paragraph should contain new information or a specific forward-looking statement, not a recap.
 
@@ -106,7 +106,7 @@ AI uses "X, doing Y" constructions at 2-5x the human rate.
 
 **Universal principle:** AI prefaces statements with importance markers - throat-clearing that signals "the following point is worth your attention," which paradoxically undermines the point. This pattern exists in every language. Cut and state directly.
 
-**Words to watch:** See Pattern 8 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`.
+**Words to watch:** See Pattern 8 in `<skill-dir>/references/ai-tells-lexicon.md`.
 
 **Rule:** Cut the disclaimer. State the thing directly.
 
@@ -121,7 +121,7 @@ These matter but are more situational.
 
 **Universal principle:** AI constructs rhetorical "not X, but Y" contrasts to sound profound. The contrast is almost always filler - state the actual point directly.
 
-**Words to watch:** See Pattern 9 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`.
+**Words to watch:** See Pattern 9 in `<skill-dir>/references/ai-tells-lexicon.md`.
 
 **Rule:** State the point directly. The rhetorical contrast is almost always filler.
 
@@ -141,7 +141,7 @@ These matter but are more situational.
 
 **Universal principle:** AI creates "from X to Y" spans that suggest breadth but don't represent meaningful scales. The range is rhetorical filler, not information.
 
-**Words to watch:** See Pattern 11 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`.
+**Words to watch:** See Pattern 11 in `<skill-dir>/references/ai-tells-lexicon.md`.
 
 **Before:** "The platform helps everyone from solo developers to enterprise teams, from startups to Fortune 500 companies."
 **After:** "Mostly used by mid-size dev teams, though some large companies have adopted it."
@@ -210,7 +210,7 @@ In plaintext, markdown, and code-adjacent contexts, replace curly quotes (" " ' 
 
 **Universal principle:** AI leaves conversational scaffolding from its chat interface in the output - greetings, sign-offs, offers to continue, excessive agreement. These are direct evidence of machine origin in any language.
 
-**Words to watch:** See Pattern 16 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`.
+**Words to watch:** See Pattern 16 in `<skill-dir>/references/ai-tells-lexicon.md`.
 
 **Rule:** Remove all of these. They are direct evidence of chatbot origin.
 
@@ -221,7 +221,7 @@ In plaintext, markdown, and code-adjacent contexts, replace curly quotes (" " ' 
 
 **Universal principle:** AI pads sentences with phrases that add no information. Every language has its own set of filler constructions that AI overuses - in English, "in order to" instead of "to"; in other languages, equivalent verbose circumlocutions.
 
-Cut these on sight. See Pattern 17 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md` for the full replacement table.
+Cut these on sight. See Pattern 17 in `<skill-dir>/references/ai-tells-lexicon.md` for the full replacement table.
 
 **Before:** "In order to fully realize the potential of these tools, it is worth noting that teams should align with best practices."
 **After:** "Teams should follow the migration guide."
@@ -239,7 +239,7 @@ AI stacks hedge words. Use one or zero.
 
 **Universal principle:** AI ends with optimistic, forward-looking platitudes instead of specific next steps. "The future looks bright" is meaningless in any language.
 
-**Words to watch:** See Pattern 19 in `${CLAUDE_SKILL_DIR}/references/ai-tells-lexicon.md`.
+**Words to watch:** See Pattern 19 in `<skill-dir>/references/ai-tells-lexicon.md`.
 
 **Before:** "In conclusion, the future of AI-assisted development looks bright. Exciting times lie ahead as we continue this journey."
 **After:** "v3 ships in March. The migration guide covers breaking changes." (Or just end the piece - no conclusion needed.)

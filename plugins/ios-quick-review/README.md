@@ -1,5 +1,37 @@
 # iOS quick review plugin
 
+Works in **Claude Code and Codex**. Install the complete plugin so its skills,
+references, scripts and agent instructions stay together.
+
+## Installation and invocation
+
+**Claude Code** (inside the Claude Code prompt):
+
+```text
+/plugin marketplace add ms-ilya/imaslou-agent-kit
+/plugin install ios-quick-review@imaslou-agent-kit
+```
+
+**Codex** (in a terminal with a plugin-capable Codex CLI):
+
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add ios-quick-review@imaslou-agent-kit
+```
+
+Start a new session after installation. Invoke `/ios-quick-review:ios-quick-review` in
+Claude Code or `$ios-quick-review` in Codex. The slash examples below use Claude
+Code syntax; Codex uses `$<skill-name>` with the same input and flags. Natural
+language triggers apply only to skills that allow automatic invocation.
+See the [kit installation guide](../../README.md#installation) and the bundled
+[runtime conventions](references/runtime.md) for tool and subagent differences.
+
+Model selection follows your host configuration, including subagent defaults.
+The plugin supplies no model override; workers normally inherit the active
+session's model when no host override applies. You can request a supported
+model explicitly.
+
+
 A step-by-step code review for iOS/Swift that scales depth to diff size. Checks eight areas: correctness, architecture, naming, dead code, performance, side effects, and AGENTS.md compliance.
 
 **When to use this vs `ios-comprehensive-review`:** This plugin suits smaller changes, uncommitted work, and cases where you want scope confirmation, performance checks, or compliance checks. Use `ios-comprehensive-review` for large PRs that need parallel analysis, cross-file checks (duplicates, breaking changes, SOLID), or the ability to resume interrupted reviews.
@@ -66,13 +98,13 @@ Reviews with 20+ findings also get written to a `code-review-YYYY-MM-DD.md` file
 
 | Skill | Trigger | What it does |
 |-------|---------|--------------|
-| `/ios-quick-review` | "review my code", "review this commit", "check my changes", "look at my diff", "find bugs", "code review", "PR review", "what do you think about this code" | Full multi-pass code review |
+| `/ios-quick-review:ios-quick-review` | "review my code", "review this commit", "check my changes", "look at my diff", "find bugs", "code review", "PR review", "what do you think about this code" | Full multi-pass code review |
 
-You can pass arguments: `/ios-quick-review <commit SHA or PR number>`
+You can pass arguments: `/ios-quick-review:ios-quick-review <commit SHA or PR number>`
 
 **Auto-trigger condition:** Only activates for Swift/iOS codebases (must contain `.swift` files, `.xcodeproj`, `.xcworkspace`, or `Package.swift`). Won't trigger for non-Swift projects.
 
-## Claude Code tools used
+## Capabilities used
 
 | Tool | Purpose |
 |------|---------|

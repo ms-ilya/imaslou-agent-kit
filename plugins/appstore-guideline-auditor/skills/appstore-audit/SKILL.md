@@ -40,6 +40,8 @@ disallowed-tools:
 
 # ABOUTME: Orchestrates a read-only App Store guideline audit — collect once, fan out per rule category, aggregate, verdict.
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 You audit a native iOS project for App Store rejection risks. You report; you
 never fix. The catalogue decides what the rules are, you decide what this
 project does, and the two grades on every finding keep those separate.
@@ -61,7 +63,7 @@ project does, and the two grades on every finding keep those separate.
 Resolve the project path from `$ARGUMENTS`, defaulting to the working directory.
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/collect-context.sh <project-path>
+bash "<plugin-root>/scripts/collect-context.sh" <project-path>
 ```
 
 It prints the scratch directory it wrote to, **outside** the project. Read
@@ -178,13 +180,19 @@ is what makes a regional finding read as verified when it is not.
 
 ### Turning the fetch into a file the checker can read
 
-`WebFetch` returns a small model's **answer about** the page, not the page. Ask
+In Claude Code, `WebFetch` can return a model’s **answer about** the page,
+rather than its raw text. In Codex, use web search/open or an allowed HTTP fetch
+to retrieve the page. Save the retrieved clause text in the format below; do
+not reconstruct missing clauses from memory. A browser summary or truncated
+extract is not the full page. Ask
 it for a summary and you get prose with no clause numbers in it, which the
 checker cannot judge a single citation against. The whole citation layer depends
 on asking correctly, so the prompt is written down here rather than improvised
 per run.
 
-Fetch the guidelines page with **this** prompt:
+When the fetch tool accepts a prompt, use the extraction request below. When
+it returns raw content, preserve the clause numbers, titles and bodies while
+formatting that content for the checker:
 
 > Reproduce every numbered guideline clause on this page verbatim, in order, as
 > a markdown list. One list item per clause, in exactly this form:
@@ -202,7 +210,7 @@ number — so a clause reproduced only as a cross-reference elsewhere must not b
 the only copy.
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-catalogue.sh --guideline-text <scratch>/guidelines.md
+bash "<plugin-root>/scripts/check-catalogue.sh" --guideline-text <scratch>/guidelines.md
 ```
 
 The checker reports one of three things, and they lead to different states:
@@ -239,23 +247,27 @@ unavailable — and the verdict line says the run was degraded.
 
 Five categories: `safety`, `performance`, `business`, `design`, `legal`.
 
-Dispatch all five **in one message**, `run_in_background: true`:
+Dispatch all five categories, with no more concurrent workers than the host
+allows; queue the remainder. The following is a **Claude Code** example. In
+Codex follow the runtime mapping for
+`<plugin-root>/agents/rule-category-auditor.md`:
 
 ```
 Agent(run_in_background: true,
       subagent_type: "appstore-guideline-auditor:rule-category-auditor",
       prompt: "CATEGORY: legal
-RULES_FILE: ${CLAUDE_PLUGIN_ROOT}/rules/legal.json
-GUIDANCE_FILE: ${CLAUDE_PLUGIN_ROOT}/skills/appstore-audit/references/detection-legal.md
+RULES_FILE: <plugin-root>/rules/legal.json
+SCHEMA_FILE: <plugin-root>/schemas/finding.schema.json
+GUIDANCE_FILE: <plugin-root>/skills/appstore-audit/references/detection-legal.md
 CONTEXT_FILES: <scratch>/target-*.json
 PROJECT_FILE: <scratch>/project.json
 OUTPUT_FILE: <scratch>/findings-legal.json
 CITATION_STATE: <the JSON array from Phase 1>")
 ```
 
-Then wait for their completion notifications, which arrive on their own. Do not
-read the agents' output files — those are full transcripts and reading one
-overflows this context.
+Wait for completion using the host’s notifications or wait tool. Do not read
+full agent transcripts. The `OUTPUT_FILE` paths above contain findings JSON,
+which Phase 3 validates before you read and merge it.
 
 Aggregate **only after all five have finished.** A partial merge silently
 under-reports, and under-reporting is the failure a developer discovers from
@@ -265,7 +277,7 @@ reports has not produced an absence of findings; Phase 3 is where that is caught
 ## Phase 3 — Validate before merging
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/validate-findings.sh <scratch>/findings-safety.json <scratch>/findings-performance.json <scratch>/findings-business.json <scratch>/findings-design.json <scratch>/findings-legal.json
+bash "<plugin-root>/scripts/validate-findings.sh" <scratch>/findings-safety.json <scratch>/findings-performance.json <scratch>/findings-business.json <scratch>/findings-design.json <scratch>/findings-legal.json
 ```
 
 Name all five files, not a glob. A category whose agent wrote nothing has no
@@ -282,7 +294,8 @@ An output that is missing or fails either gate is **not merged**. A malformed
 result is not a result; merging it anyway is how a fabricated line number
 reaches a report.
 
-Give that category one more attempt. Resume its agent with `SendMessage`, pass
+Give that category one more attempt. Continue its worker with the host’s
+follow-up/resume tool (or dispatch a replacement with the same inputs), pass
 it the validator's lines for its file word for word, and ask it to write a
 corrected `OUTPUT_FILE`. When it reports, validate that one file again. If it
 fails a second time, the category did not run: name it under **Rules withheld**
@@ -366,7 +379,7 @@ context and fetched text all stay in the scratch directory.
 Then check that this held, instead of assuming it:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/check-untouched.sh <project-path> <scratch>
+bash "<plugin-root>/scripts/check-untouched.sh" <project-path> <scratch>
 ```
 
 Add `--report <path>` when the report went somewhere other than the default. The

@@ -6,10 +6,15 @@ description: >-
   interview, and returns a forced verdict with calibrated confidence. Used
   exclusively by the feature-spec skill.
 tools: Read, Grep, Glob
-model: sonnet
 maxTurns: 6
 effort: high
 ---
+
+**Host mapping:** This role runs in Claude Code or Codex. Claude uses the
+frontmatter tool/effort settings; Codex receives this body and task inputs from
+the parent and uses its available tools. Model selection follows user and host
+configuration unless the user explicitly requests an override. Preserve the same
+task restrictions. Frontmatter is not a Codex permission boundary.
 
 # ABOUTME: Independent critic that scores a drafted feature spec against a rubric and the project's own rules.
 
@@ -45,9 +50,9 @@ grounding fact as the packet prints it, and what the code says goes in `WHY`. A
 script compares every quote with the packet and discards a finding whose quote
 is not there.
 
-You have six turns, and the last one is your reply. Send the reads you need
-together, and stop reading while a turn is still left. A turn spent on one more
-tool call with no reply after it returns nothing at all.
+Claude Code bounds this role to six turns; reserve the last for your reply.
+In Codex keep the same narrow read budget and always return the required report.
+Batch independent reads and stop before exhausting the host’s available budget.
 
 ## The rubric decides the rest
 

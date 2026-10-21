@@ -10,7 +10,7 @@ Run verification **after writing each file**, not after writing all files — th
 The verification pass catches hallucinations before they enter documentation.
 Every claim in a Memory Bank file must be traceable to actual source code.
 
-**Key principle:** Every verdict comes from a search or a read run in this session, never from memory. Use the Grep and Glob tools where the session has them; on macOS and Linux the main session has neither, so use `grep` and `find` through Bash there. Wherever this procedure names `Grep` or `Glob`, either form counts. Read a search's output before concluding: an empty result from a mistyped pattern looks the same as a genuine absence.
+**Key principle:** Every verdict comes from a search or a read run in this session, never from memory. Use the Grep and Glob tools where the session has them; when those tools are absent, use `rg` and `rg --files` through the available shell. Wherever this procedure names `Grep` or `Glob`, either form counts. Read a search's output before concluding: an empty result from a mistyped pattern looks the same as a genuine absence.
 
 ---
 

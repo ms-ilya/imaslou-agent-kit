@@ -4,11 +4,14 @@ description: Stage 1 of 4 — extract a PR or branch diff (changed files, new sy
 argument-hint: <PR number> or --base <branch> [--branch <branch>]
 disable-model-invocation: true
 allowed-tools:
+  - Read
   - Bash(bash ${CLAUDE_PLUGIN_ROOT}/scripts/extract-pr-context.sh *)
   - Bash(rm -rf .ios-review-temp)
 ---
 
 ## EXECUTION
+
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
 
 1. **Check arguments:** If no arguments were provided, show usage and stop:
    ```
@@ -27,7 +30,7 @@ allowed-tools:
    rm -rf .ios-review-temp
    ```
    ```bash
-   bash ${CLAUDE_PLUGIN_ROOT}/scripts/extract-pr-context.sh $ARGUMENTS
+   bash "<plugin-root>/scripts/extract-pr-context.sh" <parsed-and-separately-quoted-arguments>
    ```
 
    If the script exits non-zero or `.ios-review-temp/pr-context.json` was not created: report the script's error and stop.

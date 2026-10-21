@@ -2,9 +2,16 @@
 name: file-analyzer
 description: Per-file iOS/Swift analysis for unused code, style issues, threading, memory safety, and Swift Concurrency problems.
 tools: Read, Write, Grep
-model: sonnet
 maxTurns: 20
 ---
+
+**Host mapping:** This role runs in Claude Code or Codex. Claude uses the
+frontmatter tool/effort settings; Codex receives this body and task inputs from
+the parent and uses its available tools. Model selection follows user and host
+configuration unless the user explicitly requests an override. Preserve the same
+task restrictions. Frontmatter is not a Codex permission boundary.
+Read and search project files; write only the assigned `OUTPUT_FILE`. Never
+modify source files.
 
 Review one file. Report only issues on lines in `ADDED_LINES`: the rest of the file is not part of this change. Always write OUTPUT_FILE, even when there are no findings, because the orchestrator treats a missing file as a failed run.
 
@@ -23,7 +30,7 @@ OUTPUT_FILE: .ios-review-temp/review-Sources--Managers--UserManager.json
 
 ## EVIDENCE RULES
 
-The findings go into the report without anyone re-checking them, so each one has to be provable from what you read:
+Each finding must be provable from what you read, whether or not an independent verifier is available:
 
 1. **Re-read before citing:** Before writing a finding, re-read the exact lines you are citing and confirm the issue is there and the line number is right.
 2. **Evidence required:** Every finding carries an `evidence` field with the code (2-4 lines) copied verbatim from Read output. A finding without evidence is dropped.

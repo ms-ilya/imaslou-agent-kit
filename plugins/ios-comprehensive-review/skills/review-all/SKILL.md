@@ -11,6 +11,7 @@ description: >-
   Do NOT use for quick single-file reviews — use ios-quick-review instead.
 argument-hint: <PR number> or --base <branch> [--branch <branch>]
 allowed-tools:
+  - Read
   - Agent
   - Bash(jq *)
   - Bash(bash ${CLAUDE_PLUGIN_ROOT}/scripts/extract-pr-context.sh *)
@@ -21,6 +22,8 @@ allowed-tools:
 ---
 
 ## EXECUTION
+
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
 
 Report one line of progress as each stage starts and finishes.
 
@@ -53,7 +56,7 @@ Extract:
 rm -rf .ios-review-temp
 ```
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/extract-pr-context.sh $ARGUMENTS
+bash "<plugin-root>/scripts/extract-pr-context.sh" <parsed-and-separately-quoted-arguments>
 ```
 
 If the script exits non-zero or `.ios-review-temp/pr-context.json` was not created: report the script's error and stop.
@@ -74,9 +77,9 @@ SafePath: replace `/` with `--`, spaces with `__`, dots with `_DOT_`, remove `.s
 
 If all files processed: report "All files already analyzed" → skip to step 3.
 
-**Process files in batches of 10.** Claude Code caps concurrent subagents at 20, and a batch at the cap fails to spawn whenever anything else is running.
+**Process files in batches of at most 10, bounded by the host’s available worker slots.** Queue remaining files until a slot is free.
 
-For each batch, spawn ALL files in ONE message:
+For each batch, spawn ALL files concurrently up to the available worker limit:
 
 ```
 Agent(subagent_type: "ios-comprehensive-review:file-analyzer",
@@ -88,7 +91,7 @@ OUTPUT_FILE: .ios-review-temp/review-[SAFEPATH].json")
 
 Report: `Spawned batch X/Y (N files)`
 
-Subagents run in the background and each one reports back on its own when it finishes. Wait until every agent in the batch has reported; do not poll, sleep, or read their transcripts. Their findings are in the output files, not in the reports.
+Subagents run in the background and each one reports back on its own when it finishes. Wait until every agent in the batch has reported; use the host’s completion notifications or wait tool; do not busy-poll or read their transcripts. Their findings are in the output files, not in the reports.
 
 After the batch has reported, `ls .ios-review-temp/` and re-spawn, once, in the next batch every file whose `review-[SAFEPATH].json` is missing. A file that is still missing after its second attempt is a failure: record it and continue.
 
@@ -119,7 +122,7 @@ jq -r '.changed_files[] | .path as $p | .new_symbols[] | select(.type != "functi
 jq -r '.signature_changes[] | "\(.method)|\(.old_signature)|\(.new_signature // "")|\(.file):\(.line)|\(.change_type)"' .ios-review-temp/pr-context.json
 ```
 
-Spawn ALL applicable agents (not already complete) in ONE message:
+Spawn ALL applicable agents (not already complete) concurrently up to the available worker limit:
 
 - New functions exist AND no `dry-analysis.json` → spawn dry-analyzer
 - Signature changes exist AND no `breaking-analysis.json` → spawn breaking-analyzer
@@ -145,12 +148,12 @@ The analyzers each saw a narrow slice of the code, so their critical and warning
 List the findings that still need a verdict:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/findings-worklist.sh
+bash "<plugin-root>/scripts/findings-worklist.sh"
 ```
 
 Each output line is one finding as a JSON object. No output: nothing to verify → go straight to building the report.
 
-Split the lines into batches of at most 15, keeping the findings of one `file` in the same batch so that a verifier reads each file once. `ls .ios-review-temp/` and number the batches after the highest existing `verdicts-N.json`. Spawn ALL batches in ONE message:
+Split the lines into batches of at most 15, keeping the findings of one `file` in the same batch so that a verifier reads each file once. `ls .ios-review-temp/` and number the batches after the highest existing `verdicts-N.json`. Spawn ALL batches concurrently up to the available worker limit:
 
 ```
 Agent(subagent_type: "ios-comprehensive-review:finding-verifier",
@@ -164,7 +167,7 @@ Wait until every verifier has reported, as in step 2. Run the worklist script ag
 Build the report:
 
 ```bash
-bash ${CLAUDE_PLUGIN_ROOT}/scripts/build-report.sh
+bash "<plugin-root>/scripts/build-report.sh"
 ```
 
 The script writes `.ios-review-temp/ios-review-report.md` and prints the counts. If it exits non-zero: report its error and stop. Leave the intermediate files in place so that a re-run resumes from here.

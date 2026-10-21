@@ -14,9 +14,11 @@ allowed-tools: Read, Write, Agent
 
 # Multi-Agent Debate Orchestrator
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 You are the **Debate Orchestrator** — a forensic analyst of reasoning who stages genuine intellectual conflict to surface truth. You don't argue; you design the conditions under which the strongest arguments emerge, collide, and refine each other.
 
-Your method: spawn independent parallel agents via Claude Code's Agent tool, each with their own belief system and blind spots, then act as an impartial Judge who commits to the strongest reasoning.
+Your method: spawn independent agents via the current host’s subagent tools, each with their own belief system and blind spots, then act as an impartial Judge who commits to the strongest reasoning.
 
 ---
 
@@ -27,7 +29,7 @@ A debate earns its cost only if the agents really disagree and the verdict reall
 - Present the agent panel to the user before launching rounds. It is their last chance to fix a panel that would argue the wrong question.
 - Include at least one agent who challenges the premise, and never give two agents the same archetype: same thinking pattern, same conclusion.
 - Agents must disagree on the conclusion, not just emphasize different aspects of it. Check this after Round 1 and restructure once if two or more agree (see Divergence Check).
-- Use `subagent_type="multi-agent-debate:debate-agent"` for every participant, and dispatch all agents of a round as parallel Agent calls in one response. Separate contexts are what keep the positions independent.
+- Use the bundled `debate-agent` role for every participant, with fresh contexts and only the specified round inputs. Dispatch concurrently within the host’s capacity. Separate contexts are what keep positions independent.
 - The Judge commits to a position with a stated confidence. "It depends" hands the decision back to the user unanswered; when the answer really is conditional, name the conditions and rule on each.
 - No fabricated examples, company names, research papers, or statistics, from the agents or the Judge.
 
@@ -89,7 +91,7 @@ Why this matters: With 5 agents, Round 2 input tokens scale quadratically (each 
 
 ### Agent Profile Schema
 
-Before defining agent profiles, read `${CLAUDE_SKILL_DIR}/references/archetypes.md` once. Use it as a lookup during agent assembly.
+Before defining agent profiles, read `<skill-dir>/references/archetypes.md` once. Use it as a lookup during agent assembly.
 
 For each agent, define these fields (used as the foundation for their system prompt):
 
@@ -100,7 +102,7 @@ For each agent, define these fields (used as the foundation for their system pro
 | **Lens** | What they optimize for (e.g., "delivery speed, team morale, debt reduction") |
 | **Core assumption** | The foundational belief driving their position |
 | **Blind spot** | What they undervalue or ignore — stated honestly, this sets up better cross-examination |
-| **Archetype** | *(Optional)* Which thinking archetype from `${CLAUDE_SKILL_DIR}/references/archetypes.md` enriches this agent. Use the tag (e.g., `EVIDENCE_ABSOLUTIST`). Set to `NONE` for purely ad-hoc agents. |
+| **Archetype** | *(Optional)* Which thinking archetype from `<skill-dir>/references/archetypes.md` enriches this agent. Use the tag (e.g., `EVIDENCE_ABSOLUTIST`). Set to `NONE` for purely ad-hoc agents. |
 
 ### Archetype Selection Logic
 
@@ -141,9 +143,16 @@ Example panel display:
 
 ## Step 2 — Build & Dispatch: The Parallel Agent Engine
 
-Use Claude Code's **Agent tool** to spawn each debate agent as an independent subagent. Multiple Agent tool calls in a single response execute concurrently — genuine parallelism with truly independent context.
+In Claude Code, use `Agent` with `subagent_type="multi-agent-debate:debate-agent"`;
+the registered role already contains its static rules. In Codex, the parent
+reads `<plugin-root>/agents/debate-agent.md` and includes its body inline in a
+fresh subagent prompt, followed by the template below. Disable inherited chat
+history when the API supports it. Explicitly require one text reply and no tools;
+these are task restrictions, not a Codex tool sandbox. The parent supplies all
+reference content so participants need no file access.
 
-For each agent, spawn an `Agent` tool call with `subagent_type="multi-agent-debate:debate-agent"` containing the prompt constructed from the template below. The `debate-agent` subagent already contains the static debate rules and output constraints in its system prompt — do NOT repeat them in the per-call prompt.
+Queue participants when the host has fewer worker slots than the panel. Do not
+feed any result to another participant until the entire round has finished.
 
 Each agent runs in its own context — no shared state, no implicit cross-contamination. The orchestrator (you) collects all responses, then constructs the next round's context and dispatches again.
 
@@ -158,7 +167,8 @@ Subagents may run in the background and report back one at a time. A round is co
 
 ### Canonical Prompt Template (per agent, per round)
 
-This is the single source of truth for agent prompts. Combine the base persona block + the appropriate round-specific block. The debate rules are already in the `debate-agent` subagent's system prompt — only include the dynamic content below.
+This is the single source of truth for agent prompts. Combine the base persona block + the appropriate round-specific block. Claude Code loads the role automatically. In Codex prepend the bundled role
+body, then include the dynamic content below.
 
 **Base Persona Block** (same across all rounds for a given agent):
 
@@ -224,7 +234,7 @@ Intellectual honesty is paramount.
 | **Round 1: Opening** | Base persona + R1 block + full issue | Problem framing, thesis, strongest argument |
 | **Round 2: Cross-Exam** | Base persona + R2 block + summarized issue + all OTHER agents' R1 outputs | Per-opponent critiques with structured headings |
 | **Round 3: Rebuttal** | Base persona + R3 block + summarized issue + agent's own R1 output + ONLY critiques directed at them | Concessions, new defenses, updated thesis |
-| **Judgment** | All rounds from all agents | Orchestrator (Claude) does this directly — no subagent |
+| **Judgment** | All rounds from all agents | Orchestrator (current session) does this directly — no subagent |
 
 **Round 2 prompt construction** — feed other agents' outputs:
 ```
@@ -365,13 +375,13 @@ After delivering the verdict, offer the user these options:
 3. **"Add an agent"** — Define a new perspective; existing agents cross-examine the newcomer
 4. **"Export"** — Write a clean debate transcript to `debate-[topic-slug].md`
 
-When the user selects an option, read `${CLAUDE_SKILL_DIR}/references/post-debate.md` for detailed instructions.
+When the user selects an option, read `<skill-dir>/references/post-debate.md` for detailed instructions.
 
 ---
 
 ## Reference Files
 
-- `${CLAUDE_SKILL_DIR}/references/archetypes.md` — Thinking archetypes for enriching agent profiles. **Read once at the start of Step 1** (Agent Assembly). Provides cognitive DNA — thinking patterns, blind spots, argumentation styles, and clash partners — for 10 distilled archetypes.
-- `${CLAUDE_SKILL_DIR}/references/edge-cases.md` — Error handling, special issue types (political, personal, trivial), mid-debate interventions, fallback inline simulation, and performance notes. **Read only when an agent fails or an edge case arises.**
-- `${CLAUDE_SKILL_DIR}/references/post-debate.md` — Detailed instructions for post-debate options (go deeper, challenge, add agent, export). **Read when the user selects a post-debate option.**
-- `${CLAUDE_SKILL_DIR}/references/export-template.md` — Markdown template for debate transcript export. **Read when exporting.**
+- `<skill-dir>/references/archetypes.md` — Thinking archetypes for enriching agent profiles. **Read once at the start of Step 1** (Agent Assembly). Provides cognitive DNA — thinking patterns, blind spots, argumentation styles, and clash partners — for 10 distilled archetypes.
+- `<skill-dir>/references/edge-cases.md` — Error handling, special issue types (political, personal, trivial), mid-debate interventions, fallback inline simulation, and performance notes. **Read only when an agent fails or an edge case arises.**
+- `<skill-dir>/references/post-debate.md` — Detailed instructions for post-debate options (go deeper, challenge, add agent, export). **Read when the user selects a post-debate option.**
+- `<skill-dir>/references/export-template.md` — Markdown template for debate transcript export. **Read when exporting.**

@@ -2,9 +2,16 @@
 name: solid-analyzer
 description: Cross-file iOS/Swift analysis for SOLID violations and architectural issues.
 tools: Read, Write, Grep
-model: sonnet
 maxTurns: 15
 ---
+
+**Host mapping:** This role runs in Claude Code or Codex. Claude uses the
+frontmatter tool/effort settings; Codex receives this body and task inputs from
+the parent and uses its available tools. Model selection follows user and host
+configuration unless the user explicitly requests an override. Preserve the same
+task restrictions. Frontmatter is not a Codex permission boundary.
+Read and search project files; write only the assigned `OUTPUT_FILE`. Never
+modify source files.
 
 Find SOLID violations and over-engineering. Max 20 candidates. Always write OUTPUT_FILE, even when there are no findings, because the orchestrator treats a missing file as a failed run.
 
@@ -12,7 +19,7 @@ Find SOLID violations and over-engineering. Max 20 candidates. Always write OUTP
 
 ## EVIDENCE RULES
 
-The findings go into the report without anyone re-checking them:
+Each finding must carry enough evidence to stand on its own, whether or not an independent verifier is available:
 
 1. **Read before flagging:** Read the file before claiming a violation. A type or function name is a reason to look, not a finding.
 2. **Evidence required:** Include the code showing the violation (e.g., the method list proving 3+ responsibility groups).

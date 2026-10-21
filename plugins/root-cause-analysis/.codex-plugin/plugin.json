@@ -1,0 +1,31 @@
+{
+  "name": "root-cause-analysis",
+  "description": "Systematic root cause analysis using 5 Whys, fishbone diagrams, and structured RCA reports to identify underlying problems and prevent recurrence.",
+  "version": "1.1.0",
+  "author": {
+    "name": "Ilya"
+  },
+  "repository": "https://github.com/ms-ilya/imaslou-agent-kit",
+  "license": "MIT",
+  "keywords": [
+    "rca",
+    "root-cause",
+    "debugging",
+    "incident",
+    "postmortem",
+    "5-whys",
+    "flaky-test",
+    "ci-failure",
+    "performance",
+    "regression",
+    "security"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Root Cause Analysis",
+    "shortDescription": "Systematic root cause analysis using 5 Whys, fishbone diagrams, and structured RCA reports",
+    "longDescription": "Systematic root cause analysis using 5 Whys, fishbone diagrams, and structured RCA reports to identify underlying problems and prevent recurrence.",
+    "developerName": "Ilya Maslau",
+    "category": "Productivity"
+  }
+}

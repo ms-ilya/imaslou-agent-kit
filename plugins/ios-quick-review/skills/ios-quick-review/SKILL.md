@@ -16,6 +16,8 @@ allowed-tools: Read, Write, Grep, Glob, Agent, AskUserQuestion, Bash(gh pr diff 
 
 # iOS Quick Review — Efficient Multi-Pass Code Review
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 Perform an efficient, focused multi-pass code review. Every finding references exact symbols, exact files, exact lines — verified by reading the actual code. If you find 47 issues, report all 47 — incomplete reviews create false confidence.
 
 Read AGENTS.md from the project root before starting — cross-check findings against its rules. A project that keeps its rules in CLAUDE.md instead counts the same: wherever this skill says AGENTS.md, use that file. If neither is found, skip naming enforcement in Phase 4 and compliance checks in Phase 7 that depend on project-specific rules, and note the absence.
@@ -33,7 +35,7 @@ The most common failure mode in LLM code reviews is fabricating findings — rep
 
 ## Tool Strategy
 
-- **Searching**: Find symbol usages, call sites, conformances and files by name with whatever search the session has: the Grep and Glob tools where they exist, otherwise `grep` and `find` through Bash (on macOS and Linux the main session has no Grep or Glob tool). Ask for file paths only when that is all you need, and for matching lines with context when you need the surrounding code.
+- **Searching**: Find symbol usages, call sites, conformances and files by name with whatever search the session has: the Grep and Glob tools where they exist, otherwise `rg` and `rg --files` through the available shell. Ask for file paths only when that is all you need, and for matching lines with context when you need the surrounding code.
 - **Read**: Read specific files or line ranges to verify findings. Always read before reporting. Use line offsets for large files — don't read 2000 lines when you need 50.
 - **Bash**: Besides searching, only the read-only git and `gh` commands in Phase 0. A review changes nothing in the working tree.
 - **Agent**: Parallelize call-site tracing when there are 10+ changed symbols, and batch analysis on large diffs. Use `subagent_type: "general-purpose"`. A subagent sees only its prompt, so give it everything it needs: the symbols or files, the command that reproduces the diff, the checklist of the phases it covers, the Verification Rules above, and the Output Format below. Re-read the lines a subagent cites before you report its finding as yours; its report is a claim, not evidence.

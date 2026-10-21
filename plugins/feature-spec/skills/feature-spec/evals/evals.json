@@ -1,6 +1,7 @@
 {
   "skill_name": "feature-spec",
   "notes": [
+    "Run these cases in both Claude Code and Codex. Slash skill names are shorthand: invoke /feature-spec:feature-spec or /feature-spec:feature-spec-plan in Claude Code, and $feature-spec or $feature-spec-plan in Codex. Use the current host question and subagent tools; record its version and any degraded coverage.",
     "Lives inside the skill folder because that is where skill-creator looks for it. It is not part of the canonical SKILL.md / scripts / references / assets layout and is never loaded at runtime.",
     "No fixture files ship with this suite, deliberately. A spec plugin is judged on how it interviews about a REAL codebase, and four invented sample projects would only prove it can interview about four invented sample projects. Each case states the repo it needs; the operator points it at a real one.",
     "Where a case needs a feature-spec artifact rather than a codebase, `scripts/test-checks.sh` already builds one from the shipped skeleton in `references/tree-format.md` \u2014 so the fixture cannot drift from the documented format. Generate rather than store.",
@@ -21,7 +22,7 @@
         "No tree.md, spec.md or GLOSSARY.md was written anywhere",
         "The response asks at most one clarifying question",
         "The response names /grill-me as the place to start, as a suggestion and not a call",
-        "The response does not render an AskUserQuestion picker of clarifying questions",
+        "The response does not render a question-tool picker of clarifying questions",
         "The response does not begin a numbered round"
       ]
     },
@@ -65,7 +66,7 @@
       "assertions": [
         "The stack layer loaded matches the feature's scope, not merely the repo's most common language",
         "That layer's two references were loaded before any fact-finder was dispatched",
-        "All fact-finders were dispatched in a single message",
+        "Independent fact-finders were dispatched concurrently within the host worker limit, with excess work queued",
         "No more than 5 questions were asked in any one round",
         "No more than 2 rounds ran",
         "A coverage table with all ten taxonomy category names verbatim was printed after every round",

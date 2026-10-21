@@ -11,6 +11,8 @@ allowed-tools: Read, Write, Edit, Glob, Grep, Bash(mkdir -p *), Bash(mv *)
 
 # Scratchpad Skill
 
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
 A single, evolving `.md` file per issue that serves as a **living investigation journal** during debugging and transforms into a **clean knowledge artifact** on resolution.
 
 **Philosophy: "Keep the wrong stuff in."** Agents make mistakes — erasing failure removes evidence. Without evidence, the model can't adapt. Failed approaches stay visible until the issue is resolved.
@@ -67,7 +69,7 @@ Focus on conversation content not yet captured in the scratchpad. If this is the
 
 ### Step 4: WRITE — Apply changes
 
-- **New scratchpad?** Read `${CLAUDE_SKILL_DIR}/references/template-active.md` for the structure. Create with Write tool, populated from context.
+- **New scratchpad?** Read `<skill-dir>/references/template-active.md` for the structure. Create with Write tool, populated from context.
 - **Existing + new findings?** Use Edit tool to append new content to appropriate sections (see Tool Strategy). Never modify existing failed approaches — they are sacred during active debugging.
 - **Existing + nothing new?** Tell user: *"Scratchpad is up to date."* Show a one-line status summary.
 - Update status per valid transitions only (see Status Workflow).
@@ -98,7 +100,7 @@ Triggered when user clearly intends to mark the scratchpad as done/fixed. Uses o
 1. **Confirm with user**: "This will delete all Failed Approaches, rewrite the description as a knowledge artifact, and move the file to `resolved/`. Proceed?"
 2. If edge cases are unchecked → warn the user, proceed only if they confirm.
 3. **Transfer insights**: Before deleting Failed Approaches, extract all "Actual insight" lines. Verify each is incorporated into the resolved description or explicitly noted as no longer relevant.
-4. **Transform** the scratchpad — read `${CLAUDE_SKILL_DIR}/references/template-resolved.md` for the target structure:
+4. **Transform** the scratchpad — read `<skill-dir>/references/template-resolved.md` for the target structure:
    - Delete all "Failed Approaches"
    - Rename `## Issue Description` → `## Description`. Rewrite as a clean 3–8 sentence past-tense knowledge artifact. Every claim must be traceable to existing scratchpad content — do not add explanations not recorded during investigation.
    - Populate `## Solution` from the successful fix — the approach that worked. If the working fix isn't recorded in the scratchpad (e.g., user fixed it outside the scratchpad workflow), ask the user to describe it before resolving. Do not invent solution details.
@@ -174,8 +176,8 @@ Every word costs tokens every time the scratchpad is loaded in future sessions.
 
 ## Tool Strategy
 
-- **Listing**: Find `.scratchpads/SP-*.md` and `.scratchpads/resolved/SP-*.md` for the LOCATE step with the Glob tool where the session has one, otherwise `ls` through Bash (on macOS and Linux the main session has no Glob or Grep tool).
-- **Read**: Fetch scratchpad content from disk before any write. Read templates from `${CLAUDE_SKILL_DIR}/references/` when creating or transforming. Always use absolute paths.
+- **Listing**: Find `.scratchpads/SP-*.md` and `.scratchpads/resolved/SP-*.md` for the LOCATE step with the Glob tool where the session has one, otherwise `rg --files --hidden` or `ls` through the available shell.
+- **Read**: Fetch scratchpad content from disk before any write. Read templates from `<skill-dir>/references/` when creating or transforming. Always use absolute paths.
 - **Edit**: Preferred for updates to existing scratchpads (append findings, condense, status change). Use the last line of the target section as anchor in `old_string`, then replace with anchor + new content in `new_string`. This avoids accidentally modifying sacred failed approaches.
 - **Write**: Only for new scratchpad creation and full resolve transformation (entire content is rewritten). Before the first Write in a project, create the directory via Bash: `mkdir -p .scratchpads/`.
 - **Searching**: Search scratchpad content by keyword when needed (e.g., checking if a finding is already recorded), with the Grep tool or `grep` through Bash.
@@ -187,8 +189,8 @@ If file operations fail due to permissions or missing paths, inform the user of 
 
 Read the template file before writing; do not generate the structure from memory, because the section names and order are what later sessions rely on to find things.
 
-- **`${CLAUDE_SKILL_DIR}/references/template-active.md`** — Structure for active (investigating/attempted) scratchpads. Includes Failed Approach format. Only include sections that have content.
-- **`${CLAUDE_SKILL_DIR}/references/template-resolved.md`** — Structure for resolved scratchpads after transformation.
+- **`<skill-dir>/references/template-active.md`** — Structure for active (investigating/attempted) scratchpads. Includes Failed Approach format. Only include sections that have content.
+- **`<skill-dir>/references/template-resolved.md`** — Structure for resolved scratchpads after transformation.
 
 ---
 

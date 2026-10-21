@@ -3,21 +3,30 @@ name: review-analyze
 description: Stage 2 of 4 — per-file iOS/Swift analysis of the extracted diff with parallel file-analyzer agents. Run review-extract first; review-all runs every stage.
 disable-model-invocation: true
 allowed-tools:
+  - Read
   - Agent
   - Bash(jq *)
 ---
 
-## Pre-loaded Context
+## Load context explicitly
 
-File count: !`jq '.changed_files | map(select(.change_type != "deleted")) | length' .ios-review-temp/pr-context.json 2>/dev/null || echo "NO_CONTEXT"`
+**Runtime:** Before executing this workflow, read [runtime conventions](../../references/runtime.md). Resolve `<plugin-root>` and `<skill-dir>` from this file’s installed path; use the current host’s tools and invocation syntax.
+
+Run this through the host's shell tool in the project directory:
+
+```bash
+jq -e '.changed_files | type == "array"' .ios-review-temp/pr-context.json
+```
+
+If the file is absent, malformed, or the command fails, report the error and
+stop; run `review-extract` before this stage. A missing context is not an empty
+diff. No inline shell expansion is required from the host.
 
 ## EXECUTION
 
 ### 1. Load File List
 
-If pre-loaded file count shows `NO_CONTEXT`: report "Run `/ios-comprehensive-review:review-extract <PR>` first" → exit.
-
-If file count is 0: report "No analyzable files" → exit.
+Count non-deleted entries in `.changed_files`. If none exist, report "No analyzable files" and stop.
 
 Load full file list:
 
@@ -37,11 +46,11 @@ If all files processed: report "All files already processed" → exit.
 
 ### 3. Process Files
 
-Group remaining files into batches of 10. Claude Code caps concurrent subagents at 20, and a batch at the cap fails to spawn whenever anything else is running.
+Group remaining files into batches of at most 10, bounded by the host’s available worker slots. Queue remaining files until a slot is free.
 
 For each batch:
 
-**3a. Spawn ALL files in batch in ONE message:**
+**3a. Spawn ALL files in batch concurrently up to the available worker limit:**
 
 ```
 Agent(subagent_type: "ios-comprehensive-review:file-analyzer",
@@ -53,7 +62,7 @@ OUTPUT_FILE: .ios-review-temp/review-[SAFEPATH].json")
 
 Report: `Spawned batch X/Y (N files)`
 
-**3b. Wait for the batch.** Subagents run in the background and each one reports back on its own when it finishes. Wait until every agent in the batch has reported; do not poll, sleep, or read their transcripts. Their findings are in the output files, not in the reports.
+**3b. Wait for the batch.** Subagents run in the background and each one reports back on its own when it finishes. Wait until every agent in the batch has reported; use the host’s completion notifications or wait tool; do not busy-poll or read their transcripts. Their findings are in the output files, not in the reports.
 
 **3c. Handle failures:** After the batch has reported, `ls .ios-review-temp/` and re-spawn, once, in the next batch every file whose `review-[SAFEPATH].json` is missing. A file still missing after its second attempt is a failure: record it for the final report and continue.
 

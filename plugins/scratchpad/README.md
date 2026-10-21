@@ -1,12 +1,44 @@
 # Scratchpad plugin
 
+Works in **Claude Code and Codex**. Install the complete plugin so its skills,
+references, scripts and agent instructions stay together.
+
+## Installation and invocation
+
+**Claude Code** (inside the Claude Code prompt):
+
+```text
+/plugin marketplace add ms-ilya/imaslou-agent-kit
+/plugin install scratchpad@imaslou-agent-kit
+```
+
+**Codex** (in a terminal with a plugin-capable Codex CLI):
+
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add scratchpad@imaslou-agent-kit
+```
+
+Start a new session after installation. Invoke `/scratchpad:scratchpad` in
+Claude Code or `$scratchpad` in Codex. The slash examples below use Claude
+Code syntax; Codex uses `$<skill-name>` with the same input and flags. Natural
+language triggers apply only to skills that allow automatic invocation.
+See the [kit installation guide](../../README.md#installation) and the bundled
+[runtime conventions](references/runtime.md) for tool and subagent differences.
+
+Model selection follows your host configuration, including subagent defaults.
+The plugin supplies no model override; workers normally inherit the active
+session's model when no host override applies. You can request a supported
+model explicitly.
+
+
 ## The problem
 
 AI agents make mistakes during debugging. They try approaches that fail, go in circles, and lose context between sessions. Without a record of what was tried and why it failed, every new session starts from zero.
 
 ## The solution
 
-A `.md` file per bug or issue acts as a debugging notebook during investigation, then becomes a clean summary once the fix lands. One command handles everything: `/scratchpad`.
+A `.md` file per bug or issue acts as a debugging notebook during investigation, then becomes a clean summary once the fix lands. One command handles everything: `/scratchpad:scratchpad`.
 
 Failed attempts stay visible. They form a map of dead ends so the AI does not repeat them. When the issue is resolved, noise gets stripped and only the solution remains.
 
@@ -16,7 +48,7 @@ The scratchpad guides what to do next. It answers two questions:
 1. Where NOT to go - failed approaches with reasons
 2. Where to go next - updated understanding, edge cases, plan to fix
 
-Every `/scratchpad` call runs a single automatic flow:
+Every `/scratchpad:scratchpad` call runs a single automatic flow:
 
 ```
 LOCATE → find or create the right scratchpad (Glob scan of .scratchpads/)
@@ -52,16 +84,16 @@ investigating → attempted → resolved
 
 | Skill | What it does |
 |-------|--------------|
-| `/scratchpad` | Create, update, resolve, abandon, or switch scratchpads |
+| `/scratchpad:scratchpad` | Create, update, resolve, abandon, or switch scratchpads |
 
 Intent is detected from natural language. No sub-commands to remember:
 
 | You say... | What happens |
 |-----------|--------------|
-| `/scratchpad` | Create new or update existing scratchpad from conversation context |
-| `/scratchpad resolve` | Confirm with user, then transform into a solution record and move to `resolved/` |
-| `/scratchpad abandon` | Confirm with user, mark as dead end, keep as warning |
-| `/scratchpad switch` | List active scratchpads, let user pick a different one |
+| `/scratchpad:scratchpad` | Create new or update existing scratchpad from conversation context |
+| `/scratchpad:scratchpad resolve` | Confirm with user, then transform into a solution record and move to `resolved/` |
+| `/scratchpad:scratchpad abandon` | Confirm with user, mark as dead end, keep as warning |
+| `/scratchpad:scratchpad switch` | List active scratchpads, let user pick a different one |
 
 ### Resolve transformation
 
@@ -76,10 +108,10 @@ Resolving a scratchpad rewrites it completely:
 - Only findings explicitly stated or demonstrated in the conversation are recorded
 - Discussed-but-untested hypotheses are NOT failed approaches
 - Files mentioned but not opened are NOT "investigated"
-- Plan to Fix is user-written only; Claude never auto-populates it
+- Plan to Fix is user-written only; The agent never auto-populates it
 - Root Cause is only populated when conclusively demonstrated
 
-## Claude Code tools used
+## Capabilities used
 
 | Tool | Purpose |
 |------|---------|
@@ -101,11 +133,11 @@ Resolving a scratchpad rewrites it completely:
         └── SP-null-ref-user-service.md
 ```
 
-File naming: `SP-<kebab-case-issue-name>.md` - Claude proposes the name, the user confirms.
+File naming: `SP-<kebab-case-issue-name>.md` - The agent proposes the name, the user confirms.
 
 ## Design principles
 
-1. One command - `/scratchpad` does everything; it understands intent from plain language
+1. One command - `/scratchpad:scratchpad` does everything; it understands intent from plain language
 2. Points forward - "don't go there" plus "try this instead"
 3. Failed approaches are protected - never changed during active debugging, only removed on resolve
 4. Clean resolve - becomes a 3-8 sentence solution summary

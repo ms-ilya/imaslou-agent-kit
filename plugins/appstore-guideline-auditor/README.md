@@ -1,5 +1,43 @@
 # App Store Guideline Auditor
 
+Works in **Claude Code and Codex**. Install the complete plugin so its skills,
+references, scripts and agent instructions stay together.
+
+## Installation and invocation
+
+**Claude Code** (inside the Claude Code prompt):
+
+```text
+/plugin marketplace add ms-ilya/imaslou-agent-kit
+/plugin install appstore-guideline-auditor@imaslou-agent-kit
+```
+
+**Codex** (in a terminal with a plugin-capable Codex CLI):
+
+```sh
+codex plugin marketplace add ms-ilya/imaslou-agent-kit
+codex plugin add appstore-guideline-auditor@imaslou-agent-kit
+```
+
+Start a new session after installation. Invoke `/appstore-guideline-auditor:appstore-audit` in
+Claude Code or `$appstore-audit` in Codex. The slash examples below use Claude
+Code syntax; Codex uses `$<skill-name>` with the same input and flags. Natural
+language triggers apply only to skills that allow automatic invocation.
+See the [kit installation guide](../../README.md#installation) and the bundled
+[runtime conventions](references/runtime.md) for tool and subagent differences.
+
+Model selection follows your host configuration, including subagent defaults.
+The plugin supplies no model override; workers normally inherit the active
+session's model when no host override applies. You can request a supported
+model explicitly.
+
+Independent agent stages require host subagent support. Runs with limited
+delegation report that limitation.
+
+Requires Bash, Python 3 and standard Unix tools (macOS, Linux or WSL). Live
+citation checking needs web access; offline audits label citations unverified.
+
+
 Audits a native iOS Xcode project for App Store rejection risks. Read-only: it
 modifies nothing that was already in the project, and creates exactly one file —
 its report. That is checked, not only promised: the audit records the project's
