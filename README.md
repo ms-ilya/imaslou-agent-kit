@@ -26,8 +26,8 @@ Two plugins for reviewing iOS/Swift code. They differ in what they review and ho
 
 | Plugin | Reviews | Approach | Best for |
 |--------|---------|----------|----------|
-| [ios-quick-review](./plugins/ios-quick-review) | Uncommitted changes (default), commits, PRs | Single agent, 8 sequential phases | Work-in-progress code, small diffs, scope confirmation |
-| [ios-comprehensive-review](./plugins/ios-comprehensive-review) | Committed branch/PR history only | 5 parallel agents, 4-stage pipeline | Large PRs, cross-file analysis, resumable reviews |
+| [ios-quick-review](./plugins/ios-quick-review) | Uncommitted changes (default), commits, PRs | 8 phases, parallel batches for large diffs | Work-in-progress code, small diffs, scope mapping |
+| [ios-comprehensive-review](./plugins/ios-comprehensive-review) | Committed branch/PR history only | 5 specialized agent roles across 4 stages | Large PRs, cross-file analysis, resumable reviews |
 
 `ios-comprehensive-review` uses `git diff base...head` and only sees committed history. Uncommitted or staged changes are not included. To review uncommitted work, use `ios-quick-review` or commit first.
 
@@ -35,9 +35,9 @@ Two plugins for reviewing iOS/Swift code. They differ in what they review and ho
 
 Step-by-step code review that adjusts depth based on diff size.
 
-- 8 phases: scope confirmation, then 7 review areas (correctness, architecture, naming, dead code, performance, side effects, AGENTS.md compliance)
+- 8 phases: acquire changes, map scope, then review correctness, architecture, naming, dead code, performance and side effects/compliance
 - Adapts to diff size: small diffs get a quick combined pass; large diffs are split across parallel agents
-- Confirms scope before starting deep analysis
+- Presents scope before deep analysis; asks for confirmation when the target is ambiguous or the diff is large
 - Searches the entire codebase to find every call site for each changed function or variable
 
 **Skills:**
@@ -54,7 +54,7 @@ Auto-triggers only for Swift/iOS codebases.
 
 #### [ios-comprehensive-review](./plugins/ios-comprehensive-review)
 
-Multi-agent code review using 5 parallel agents across a 4-stage pipeline. Can resume if interrupted.
+Multi-agent code review using 5 specialized agent roles across a 4-stage pipeline, with parallel work within stages. Can resume if interrupted.
 
 - Per-file analysis: unused code, force unwraps, memory leaks, threading, Swift Concurrency (`@Sendable`, actor isolation, continuations), naming
 - Cross-file analysis: duplicate code, breaking API changes (including deleted functions), design violations with over-engineering check
@@ -97,13 +97,13 @@ Distinct from the two review plugins above. They ask whether your Swift is good;
 
 - Every finding carries **two independent grades** — a severity, and how firmly code evidence supports it: `PROVEN` (a file and line, or a required thing confirmed absent), `PROBABLE` (the pattern matched but the finding says *which* context it could not confirm), `MANUAL` (undecidable from code — routed to a checklist, never into the findings list)
 - Nothing is dropped for being uncertain; uncertainty is labelled, so a wide net does not cost you a report where a guess and a fact look identical
-- **Citations are checked, not copied.** Apple reuses and retires guideline numbers — 2.5.10 is now *intentionally omitted*, and 4.5.5 went from Push Notifications to Game Center Player IDs. No rule enters the catalogue until its number resolves against Apple's text, and each run re-checks against Apple's current published text
+- **Guideline anchors are checked against retrieved text.** Each run checks that cited numbers exist and are not marked intentionally omitted. This does not verify that a clause's meaning still matches the rule; non-numbered policy requirements are tracked separately
 - Resolves Apple's guidelines and policy pages by **search, then fetch**, so a requirement announced after the plugin shipped is still reached. A run that cannot reach them still completes, recording per source whether each citation was verified
 - **Every shipping target separately** — ITMS-91053 is evaluated per target by an automated scanner, so a widget extension is a separate product and gets its own privacy-manifest check
-- Regional and dated requirements (Brazil, EU, Korea, the September 2026 age-rating mandate) name the storefront or date they apply to and the source they were verified against
+- Regional and dated requirements name their storefront/date and source status. Fetched policy pages are marked `retrieved`; the checker does not verify their meaning
 - Refuses cross-platform projects by name rather than auditing them badly — Flutter, React Native, Expo, Kotlin Multiplatform, .NET MAUI, Cordova/Ionic, Capacitor, Unity
-- **68 rules, derived rather than copied** — merged from 249 named rule topics across four MIT-licensed upstream sources, re-authored with executable detection patterns, re-graded against one severity vocabulary in place of four incompatible ones, and re-cited against Apple's text, which contradicts two of the four sources on Guideline 4.8
-- **Registers no hooks and ships nothing that only checks itself.** Every file in the installed plugin runs during an audit
+- **71 rules, derived rather than copied** — merged from 249 named rule topics across four MIT-licensed upstream sources, re-authored with executable detection patterns and re-graded against one severity vocabulary
+- **Registers no plugin hooks.** The workflow invokes its audit scripts explicitly; maintainer tooling stays outside the installed package
 
 **Commands:**
 
@@ -162,7 +162,7 @@ Turns what you already have into a critic-verified spec, and a separate command 
 - The spec that ships is the draft that was checked: publishing renames the file, so nothing is retyped after the checks ran
 - Proposes competing strategies and records the chosen one *and the rejected ones*, with reasons
 - Builds a project glossary and promotes hard-to-reverse decisions to ADRs via a three-part test
-- An independent critic scores the draft before anything is written, and cannot rubber-stamp: zero findings requires a list of what it checked, and every quote in its reply is compared with what it was shown
+- An independent critic scores the draft before publication, and cannot rubber-stamp: zero findings requires a list of what it checked, and every quote in its reply is compared with what it was shown
 - Every `path:line` a grounding fact cites is opened by a script: a file that is not there, or a line past its end, fails the record
 - Detachable Swift/iOS, TypeScript and Python layers that load only on stack detection
 - Ships deterministic validators that check the plugin's **own output** — the design record, the draft before the critic, the plan against its spec — and that refuse to report a pass they did not actually establish
@@ -270,7 +270,7 @@ Finds the real cause of bugs and incidents using the 5 Whys method and structure
 
 - Guides investigation from observed symptom to actual root cause using the 5 Whys technique
 - Groups contributing factors into categories: Code, Data, Infrastructure, Process, People
-- 7-step process: gather facts, reproduce, identify factors, find root cause, propose solutions, implement, document
+- 4 phases: understand the symptom, gather evidence, build the 5 Whys chain, then report causes and proposed solutions
 - Structured report with timeline, impact, solutions, prevention plan
 
 **Skills:**
@@ -287,24 +287,26 @@ Finds the real cause of bugs and incidents using the 5 Whys method and structure
 
 #### [humanizer](./plugins/humanizer)
 
-AI-to-human text converter. 9-step pipeline: Content Intelligence, pattern detection, rewrite, two-pass self-audit, independent judge verification.
+Rewrites prose for natural phrasing, clear structure and a consistent voice while preserving meaning. Supports full rewrites, light edits, scoped file changes and read-only style audits.
 
-- 23 patterns in two priority tiers: tier 1 (8 patterns, ~80% of detectable AI tells) always fixed; tier 2 (15 patterns) fixed when present
-- Statistical texture: information density variation, sentence length variance, referential cohesion, punctuation variety
-- Adaptive voice: 12 content archetypes (blog, technical, email, marketing, academic, etc.) with mechanical voice parameter detection
-- Two-pass self-audit: adversarial self-question + 14-point mechanical checklist
-- Independent judge agent: for long text (>2000 words), a separate agent scores the rewrite without seeing the editing process
-- Content integrity: never adds facts, claims, or opinions absent from the original; anti-hallucination guardrails block fabricated statistics and citations
-- Era-aware vocabulary: AI word lists tagged by model generation (2023, 2024, 2025+) in `references/` for easy updates
+- 23 contextual review prompts: 8 Tier 1 and 15 Tier 2 patterns; ordinary words, punctuation and sentence lengths are not defects on their own
+- Full rewrites retain the complete source, a compact reader/genre/register brief and selective exact anchors, then recompose connected facts; light and scoped requests retain their boundaries
+- Explicit English/Russian guidance and conditional supplied-sample matching; no fabricated persona, imported sample facts or forced casualness
+- Independent-judge attempts for sources over 2,000 words, structural or semantic risk, mixed languages, explicit requests or unresolved meaning; unavailable review is disclosed
+- Acceptance follows fidelity, quality and finding severity; optional scores are descriptive. Unresolved meaning blocks delivery
+- Hard checks cover attribution, uncertainty, numbers, relationships, protected content and scope; at most two self-revisions, one correction after an independent REVISE and two judge attempts
+- A bundled Python standard-library keeper retains every new candidate and actual report, blocks known hard-failure judging and freezes reservations after PASS; read-only inspection checks source/export identity without model or detector calls
 
 **Skills and agents:**
 
 | Component | Name | Trigger |
 |-----------|------|---------|
 | Skill | `/humanizer:humanizer` | "humanize this", "de-slop", "sounds like AI", "too robotic", "reads like ChatGPT", "make it sound natural" |
-| Agent | `judge` | Spawned automatically by the skill for long text verification |
+| Agent | `judge` | Independent editorial and source-fidelity review when required by length, risk, uncertainty or explicit request |
 
-**Works with:** Any text in any language; blog posts, documentation, emails, marketing copy, academic writing
+**Works with:** English and Russian prose, including newsletters, documentation, emails and mixed-language files. Other languages receive conservative editing with disclosed limits. Detector passage and human authorship are not guaranteed.
+
+**2.0.0 is prepared as an update candidate** for Claude Code and Codex, with matching host manifests, refined Russian examples and one shared contextual fidelity standard. Offline workflow and packaging checks pass; human writing-quality validation and reviewer consistency remain release limitations. See the [update summary](plugins/humanizer/README.md#200-update-summary) and [production readiness](docs/humanizer-validation/README.md). The candidate has not been installed or promoted by this work.
 
 ---
 
@@ -337,7 +339,8 @@ For example: `$appstore-audit /path/to/MyApp`, `$feature-spec <idea>`, or
 `agents/openai.yaml`.
 
 The scripts need a Unix shell (macOS, Linux or WSL). `feature-spec` and the App
-Store auditor need Python 3; comprehensive reviews need `jq` and Git, plus
+Store auditor need Python 3; Humanizer's local retention helper needs Python 3.9+.
+Comprehensive reviews need `jq` and Git, plus
 an authenticated `gh` for PRs. Independent critics and debate participants need
 subagent support. Without it, skills disclose reduced coverage or self-review.
 Model selection follows your host configuration in both environments. Claude's

@@ -52,7 +52,7 @@ evidence from representative evaluations before becoming a kit default.
 | appstore-guideline-auditor | 1 | Resolve packaged catalog/schema paths; pass the schema to workers; adapt web retrieval, five-category dispatch, waits and retries; distinguish findings JSON from transcripts. |
 | feature-spec | 2 | Resolve templates and scripts; run validators explicitly in Codex; adapt questions, instruction discovery and fact-finder retries; preserve independent critics; state the planning skill's actual context behavior. |
 | grill-me | 1 | Resolve interview references; use the host's question limits and wait for asynchronous answers; retain explicit invocation. |
-| humanizer | 1 | Resolve language and pattern references; supply the judge role in a fresh context; disclose self-scoring when independent review is unavailable. |
+| humanizer | 1 | Resolve language and pattern references; supply the judge role in a fresh context; disclose eligible self-check fallback when independent review is unavailable; unresolved semantics still block delivery. |
 | ios-comprehensive-review | 6 | Replace automatic shell expansion with explicit context checks; parse arguments separately; dispatch within host capacity; adapt role loading and waits; preserve unverified findings. |
 | ios-quick-review | 1 | Map file/search/question/delegation capabilities through the shared runtime while retaining scope confirmation and review phases. |
 | memory-bank | 5 | Resolve shared verification guidance; replace OS-based tool assumptions with capability checks; preserve discovery and verification gates. |
@@ -77,6 +77,7 @@ python3 scripts/check_compatibility.py
 python3 scripts/test_compatibility.py
 python3 scripts/test_codex_smoke.py
 python3 scripts/test_packaging.py
+python3 -B -m unittest discover -s scripts -p 'test_humanizer_*.py'
 bash .dev/appstore-guideline-auditor/selftest.sh
 git diff --check
 ```
@@ -95,9 +96,21 @@ git diff --check
   cited. An assistant's model claim cannot substitute for host records.
 - `test_packaging.py` copies packages into temporary paths containing spaces,
   removes Claude path variables, and runs helpers from a separate project
-  directory. Its five integration tests include the feature-spec suite,
+  directory. Its integration tests include the feature-spec suite,
   auditor validation and project preservation, review extraction from existing
-  Git history, and unverified/confirmed review findings. It creates no commits.
+  Git history, unverified/confirmed review findings, and exact Humanizer
+  selected-byte export. It creates no commits.
+- `test_humanizer_stages.py` checks the bounded local keeper: source/selected
+  bytes, review gates, actual adverse evidence versus literal quotations,
+  format-only repair, counters, corruption and intact-run export recovery.
+- `test_humanizer_contracts.py` checks frozen source partitions, protected bytes,
+  complete review coverage, objective outcomes, risk-based review prerequisites,
+  explicit critical-quality failures and bounded English/Russian diagnostics. These are
+  deterministic fixtures; they do not invoke a writer, judge or detector.
+- `test_humanizer_acceptance.py` checks tier/count/score invariance, semantic uncertainty transitions, strict source anchors and read-only byte indexing. `test_humanizer_review_packets.py` checks complete source inputs and the reduced canonical resource set without writer judgments. These synthetic declarations establish mechanics, not true equivalence or prose quality.
+- `test_humanizer_text_integrity.py` checks read-only Unicode inspection and the
+  separate explicit-edit helper's byte-bound safeguards. Inspection summaries
+  are bounded; standalone edit receipts retain their full scalar inventories.
 - The feature suite contains 237 assertions; the auditor self-test contains 51
   checks. Skipped checks are not evidence of compatibility.
 
@@ -130,6 +143,21 @@ dependency is absent. Its fixed frontmatter allowlist also omits Claude's
 compatibility authority for this shared format. The repository checker parses
 those fields with the existing Ruby fallback, and the native Codex loader
 accepted the shared skills.
+
+### Humanizer checks
+
+Humanizer's canonical and generated host manifests both specify `2.0.0`.
+The [update summary](../plugins/humanizer/README.md#200-update-summary) covers
+the candidate and its active-run compatibility. Matching metadata and passing
+offline checks do not establish release readiness.
+
+The keeper, text-integrity and relocated-package suites use synthetic fixtures
+to check artifact retention, revision limits, protected bytes and export
+identity. These checks do not establish detector performance or native-human
+quality. The [Humanizer readiness summary](humanizer-validation/README.md) records
+current offline verification and remaining release limitations.
+Bulk experiment records are retained in a verified archive under
+ignored `.dev/humanizer-evidence/` and are not installed-plugin dependencies.
 
 Claude Code's CLI was not available for a live loading test. Its manifests,
 frontmatter, agent files and hook contracts were checked statically, and the

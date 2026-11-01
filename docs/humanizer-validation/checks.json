@@ -1,0 +1,64 @@
+{
+  "recorded_utc": "2026-11-01T17:35:29.814874+00:00",
+  "scope": "Offline workflow mechanics, packaging and host compatibility. Does not validate prose quality or semantic truth.",
+  "checks": [
+    {
+      "command": "python3 -B -m unittest discover -s scripts -p 'test_humanizer*.py'",
+      "exit_code": 0,
+      "tests": 202,
+      "result": "OK"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s scripts -p test_packaging.py",
+      "exit_code": 0,
+      "tests": 10,
+      "result": "OK"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s scripts -p test_compatibility.py",
+      "exit_code": 0,
+      "tests": 10,
+      "result": "OK"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s scripts -p test_codex_smoke.py",
+      "exit_code": 0,
+      "tests": 10,
+      "result": "OK"
+    },
+    {
+      "command": "python3 -B scripts/sync_metadata.py --check",
+      "exit_code": 0,
+      "result": "Metadata checked: 0 file(s) stale"
+    },
+    {
+      "command": "python3 -B scripts/check_compatibility.py",
+      "exit_code": 0,
+      "result": "Compatibility checks passed: 10 plugins, 20 skills, 11 agent roles"
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "result": "No diagnostics"
+    }
+  ],
+  "total_tests": 232,
+  "all_passed": true,
+  "package_files": 22,
+  "local_log_directory": ".dev/humanizer-reviewer-consistency-2026-11-01/173416",
+  "update_preparation": {
+    "recorded_utc": "2026-11-01T17:42:43.601539+00:00",
+    "scope": "Version and documentation follow-up; the earlier full regression results above are retained.",
+    "packaging_tests": 10,
+    "all_passed": true,
+    "metadata_stale_files": 0,
+    "compatibility": "passed",
+    "local_links_checked": 50,
+    "diff_check": "passed",
+    "host_versions": {
+      "claude": "2.0.0",
+      "codex": "2.0.0"
+    },
+    "local_log_directory": ".dev/humanizer-update-preparation-2026-11-01/174205"
+  }
+}

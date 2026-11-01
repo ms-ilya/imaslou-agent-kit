@@ -63,14 +63,13 @@ Nothing is dropped for being uncertain; uncertainty is labelled. That is what
 lets the auditor cast a wide net without the usual cost — a report where a guess
 and a fact look identical.
 
-**Citations are checked, not copied.** Apple reuses and retires guideline
-numbers: 2.5.10 is now marked *intentionally omitted*, and Push Notifications
-moved from 4.5.5 to 4.5.4 — 4.5.5 is Game Center Player IDs today. A rule
-cannot enter the catalogue until its number resolves against Apple's text, and
-at run time each audit resolves Apple's current guidelines page by search and
-re-checks every cited number against it. Policy pages are fetched too, but no
-check reads them: a regional or dated requirement is reported with its policy
-source marked retrieved, not verified.
+**Citations are checked against retrieved text.** Apple can reuse or retire
+guideline numbers. Each audit resolves the current guidelines page by search
+and checks that cited numbers exist and are not marked *intentionally omitted*.
+This does not establish that a clause's meaning still matches the rule.
+Non-numbered policy requirements are tracked separately. Policy pages are
+fetched, but no check compares rules with them: a regional or dated requirement
+has its policy source marked retrieved, not verified.
 
 **Every target, separately.** ITMS-91053 is evaluated per target by an automated
 scanner. A widget extension is a separate product from Apple's side, and an
@@ -120,10 +119,9 @@ agents/           the per-category auditor, dispatched once per rule category
 skills/           the orchestrator and its detection references
 ```
 
-Everything here runs during an audit. Nothing in the installed plugin exists
-only to check the plugin itself — the regression fixtures that guard the
-collector and the two validators are maintainer tooling and are not
-distributed with this repository.
+The installed package contains the audit workflow and its resources. Regression
+fixtures and maintainer tooling stay outside that package; see the repository's
+[validation guide](../../docs/compatibility.md).
 
 ## The catalogue gate
 
@@ -156,10 +154,9 @@ Decisions that look arbitrary until you hit the thing they prevent. The
 reasoning lives here because it is what a change to this plugin has to argue
 against.
 
-- **Rule ids are opaque and encode no guideline number.** Apple reuses and
-  retires numbers — 2.5.10 is now *intentionally omitted*, and 4.5.5 went from
-  Push Notifications to Game Center Player IDs. Keying rules by number means
-  re-keying every rule and every emitted finding each time Apple renumbers.
+- **Rule ids are opaque and encode no guideline number.** Apple can reuse or
+  retire numbers. Keying rules by number would require re-keying rules and
+  emitted findings each time that happens.
 - **The plugin registers no hooks.** An earlier draft ran the catalogue gate from
   a plugin-level `PostToolUse` hook. That fires on every `Write`/`Edit` in every
   project the plugin is installed into, so every user paid a subprocess per file
@@ -212,7 +209,8 @@ Real, detectable rejection vectors this catalogue does not carry yet, named
 rather than silently dropped, and the first candidates for the next round:
 Dynamic Type support, orientation and safe-area compliance, advertising inside a
 widget or extension target, `SKStoreReviewController` misuse,
-keyboard-extension network restrictions, and screen-recording disclosure.
+and keyboard-extension network restrictions. Recording consent/indicator checks
+are covered by `recording-without-consent-indicator`.
 
 Whole classes were left out on purpose, and stay out: anything decided in App
 Store Connect rather than in the repository (it becomes a checklist item

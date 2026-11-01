@@ -1,6 +1,6 @@
-# AI Tells Lexicon
+# English phrase review lexicon
 
-Word and phrase lists for patterns with large or growing vocabularies (referenced from pattern-library.md). Organized by pattern number for easy cross-reference. Update individual sections as new patterns emerge.
+English editorial review prompts, organized by stable pattern number. A match alone is not an error or evidence of AI authorship. Keep meaningful qualifications, attribution, technical language and relationships. Do not apply English phrases as Russian rules; use the skill's language guidance.
 
 **Patterns covered here:** 1, 4, 6, 7, 8, 9, 11, 16, 17, 19.
 **Patterns with inline word lists in pattern-library.md:** 3, 5, 10, 12, 13, 14, 15, 18, 20, 21, 22, 23.
@@ -28,7 +28,7 @@ Sentence-ending participial tails: highlighting..., ensuring..., reflecting..., 
 
 That said, With that in mind, Moving on, On a related note, Building on this, Having established that, Turning to, Let's explore, Let's dive in, Let's break this down, Here's the thing, The bottom line, At the end of the day
 
-**Rule:** Cut. Start the next thought directly.
+**Review:** Remove empty transitions; keep contrast, sequence or causal signposting needed to understand the relationship.
 
 ---
 
@@ -36,7 +36,7 @@ That said, With that in mind, Moving on, On a related note, Building on this, Ha
 
 Overall, In conclusion, In summary, To sum up, In closing
 
-Also: any final paragraph that restates everything already said.
+Review redundant restatement. Keep useful summaries and any unique limitation, action, attribution or conclusion.
 
 ---
 
@@ -44,7 +44,7 @@ Also: any final paragraph that restates everything already said.
 
 It's important to note, It's worth mentioning, It's crucial to remember, It should be noted that, Keep in mind that, One thing to consider
 
-**Rule:** Cut. State the thing directly.
+**Review:** Remove the empty introduction while retaining the entire substantive statement, including any warning or qualification.
 
 ---
 
@@ -68,29 +68,31 @@ from X to Y (where X and Y aren't on a meaningful scale), ranging from...to, spa
 
 **Sycophantic openers:** That's a great point!, What a thoughtful question!, You raise an excellent point!, That's an insightful observation!
 
-**Rule:** Remove all. Direct evidence of chatbot origin.
+**Review:** Remove unwanted assistant scaffolding around the requested document. Preserve real temporal limits, quoted text and intentional greetings, invitations or uncertainty appropriate to the communication. These phrases alone do not prove chatbot origin.
 
 ---
 
 ## Pattern 17 - Filler phrases
 
-| Filler | Replacement |
-|--------|-------------|
-| In order to | To |
-| Due to the fact that | Because |
-| At this point in time | Now |
-| It is worth noting that | (just state it) |
-| It goes without saying | (then don't) |
-| When it comes to | (name the topic) |
-| The system has the ability to | The system can |
-| In the realm of | In |
-| A wide range of | many, various |
-| With that being said | (cut, or use "but") |
-| It's also worth considering | (just state it) |
-| plays a crucial role in | helps, matters for |
-| This means that | (cut - the meaning is usually obvious) |
-| In today's [X] landscape | (cut entirely - always filler) |
-| At the end of the day | (cut) |
+These are conditional editing choices. Keep the source when no shorter equivalent preserves its claim; an unnamed attribution must not acquire an invented source.
+
+| Wording to review | Possible edit and meaning to retain |
+|-------------------|------------------------------------|
+| In order to | To, retaining purpose and any limiting condition |
+| Due to the fact that | Because, retaining the same causal relationship |
+| At this point in time | Now only if it refers to the same time; keep a substantive time boundary |
+| It is worth noting that | State the full warning, qualification or observation directly |
+| It goes without saying | Remove the empty introduction, not the proposition it introduces |
+| When it comes to | Name the topic directly without broadening the claim's scope |
+| The system has the ability to | The system can, if both describe capability rather than permission |
+| In the realm of | In, if it names the same domain |
+| A wide range of | Retain the breadth or stated range; many describes quantity and may not be equivalent |
+| With that being said | Omit empty framing or use but when the contrast survives |
+| It's also worth considering | Preserve the recommendation to consider something; remove only empty framing |
+| plays a crucial role in | Retain the claimed importance or necessity; helps alone can weaken it |
+| This means that | (omit only if the inference remains explicit and clear) |
+| In today's [X] landscape | (review whether the time/context is substantive) |
+| At the end of the day | Omit only an empty idiom; preserve a literal deadline or meaningful final assessment |
 
 ---
 

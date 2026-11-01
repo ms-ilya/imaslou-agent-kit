@@ -1,72 +1,44 @@
-# AI Vocabulary by Era
+# English vocabulary choices
 
-Words that appear at statistically abnormal rates in AI-generated text. They shift over time as models update. When a new model generation emerges, add a new era section below.
+The historical filename is retained for existing references. These are editorial candidates, not verified model-era fingerprints or a blacklist. No model-specific rate claim is made. Review only English prose; do not translate this list into Russian substitution rules.
 
-**Rule:** Replace with plain alternatives. Most of these words can simply be cut.
+Use a plainer alternative only when it preserves the exact meaning and fits the register. Preserve technical terms, quoted language, attribution and meaningful emphasis. “Robust regression,” biological “ecosystem” and a literal “landscape” need no correction merely because they match the list. An unchanged listed word is a valid decision.
 
-**Note:** Words can appear in multiple eras when models continue using them. This is intentional - it shows which terms persist across generations vs. which are era-specific.
-
-## 2023 to mid-2024 (GPT-4 era)
-
-| AI word | Plain alternative |
-|---------|-------------------|
-| Additionally | also, or cut entirely |
-| delve | look at, examine |
-| tapestry (abstract) | cut or use specific descriptor |
-| meticulous / meticulously | careful, thorough |
-| testament | evidence, sign, proof |
-| intricate / intricacies | complex, details |
+| Wording to review | Possible alternative, if equivalent |
+|-------------------|------------------------------------|
+| additionally | also; omit only if the relationship remains clear |
+| delve into | examine, look at |
+| abstract tapestry / landscape | the actual field or subject already supplied |
+| meticulous / meticulously | careful / carefully, if no precision is lost |
+| testament | sign, evidence; never strengthen it to proof |
+| intricate / intricacies | complex / details, where equivalent |
 | boasts | has, includes |
 | bolstered | supported, strengthened |
 | garner | get, earn, attract |
 | interplay | interaction, relationship |
-| valuable | useful, helpful |
-
-## Mid-2024 to mid-2025 (GPT-4o era)
-
-| AI word | Plain alternative |
-|---------|-------------------|
-| align with | match, fit, support |
-| crucial | important, key |
-| emphasizing | cut the participial phrase |
+| valuable | useful, if equivalent |
+| align with | match or fit when equivalent; support can imply a different relationship |
+| crucial / pivotal / key | retain meaningful importance; otherwise simplify emphasis |
 | enhance | improve |
 | enduring | lasting |
 | fostering | building, encouraging |
-| highlighting | cut the participial phrase |
-| pivotal | important, key |
-| showcasing | showing, demonstrating |
+| emphasizing / highlighting / showcasing | state the existing point directly, retaining its claim |
 | underscore | show, emphasize |
-| vibrant | cut or use specific descriptor |
+| vibrant | keep its intended meaning or use a supplied descriptor |
+| robust | retain technical meaning; otherwise strong/reliable only if equivalent |
+| streamline | simplify or speed up only if that is what the source claims |
+| leverage / harness | use |
+| facilitate | help where equivalent; enable may overstate what makes an action possible |
+| holistic | overall, complete only if equivalent |
+| ecosystem | retain established domain meaning; otherwise system/community if accurate |
+| navigate | deal with, handle, work through in a metaphorical context |
+| empower | retain the sense of authority, permission or ability; enable/allow only if equivalent |
+| transformative | preserve any stated change; remove only empty promotional framing |
+| straightforward | simple, clear if equivalent |
+| notably / particularly / essentially / ultimately | retain actual emphasis or logic; omit empty framing |
+| nuanced | subtle, complex only if equivalent |
+| comprehensive | full, thorough only if equivalent |
+| meaningful | retain the actual claim; never invent a measurement |
+| I'd be happy to / certainly | review conversational function before removing |
 
-## Mid-2025 onward (GPT-4o+ and Claude 3.5/4 era)
-
-Covers patterns from both GPT-family and Claude-family models. Claude-specific patterns are marked with (C).
-
-| AI word | Plain alternative |
-|---------|-------------------|
-| emphasizing | cut the participial phrase |
-| enhance | improve |
-| highlighting | cut the participial phrase |
-| showcasing | showing |
-| landscape (abstract) | field, area, market |
-| key (adjective, overused) | important, main |
-| robust | strong, reliable |
-| streamline | simplify, speed up |
-| leverage (verb) | use |
-| facilitate | help, enable |
-| holistic | overall, complete |
-| ecosystem (non-biological) | system, community, market |
-| navigate (abstract) | deal with, handle, work through |
-| harness | use |
-| empower | enable, let, help |
-| transformative | cut or be specific about the change |
-| straightforward (C) | simple, easy, clear |
-| notably (C) | cut, or state the notable thing directly |
-| particularly (C) | especially, or cut |
-| nuanced (C) | complex, subtle, or cut |
-| comprehensive (C) | full, complete, thorough |
-| I'd be happy to (C) | cut - chatbot artifact |
-| certainly (C) | yes, or cut |
-| essentially (C) | cut, or state directly |
-| ultimately (C) | cut, or state the outcome directly |
-| meaningful (abstract) (C) | real, significant, or be specific |
+Choose context over a shorter synonym. “Helps” may weaken “is necessary”; “proof” may strengthen “evidence.” If no supported clearer wording exists, keep the source.

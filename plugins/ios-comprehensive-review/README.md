@@ -38,7 +38,7 @@ Requires Bash, `jq` and Git; PR mode also needs an authenticated `gh` CLI. Use
 macOS, Linux or WSL. The individual stage skills require explicit invocation.
 
 
-Multi-agent code review for iOS/Swift projects. Five parallel agents run a 4-stage pipeline (resumable if interrupted) to check code quality, find duplicate code, detect breaking API changes, and flag design issues.
+Multi-agent code review for iOS/Swift projects. Five specialized agent roles work across a 4-stage pipeline, with parallel analysis within stages and resumption if interrupted, to check code quality, duplicate code, breaking API changes and design issues.
 
 What it checks:
 - Per-file: force unwraps, memory leaks, threading, Swift Concurrency (`@Sendable`, actor isolation, continuations), unused code, naming
@@ -93,7 +93,7 @@ Stages 2-4 depend on stage 1 (they read from `.ios-review-temp/pr-context.json`)
 
 ## Architecture
 
-Five agents, parallelized within each stage:
+Five agent roles, with work parallelized within the relevant stages:
 
 | Agent | Focus |
 |-------|-------|

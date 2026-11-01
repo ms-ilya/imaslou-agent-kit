@@ -77,6 +77,48 @@ Read the assigned input and report evidence without editing it.
         self.assertEqual(status, 0, output)
         self.assertIn('1 plugins, 1 skills, 1 agent roles', output)
 
+    def test_python_helper_requires_matching_host_grant(self):
+        helper = self.plugin / 'scripts/retain.py'
+        self.write(helper, '# ABOUTME: Retains a packaging fixture.\n')
+        original = self.skill.read_text()
+        invocation = '\nRun `python3 -B "<plugin-root>/scripts/retain.py"`.\n'
+        self.skill.write_text(original + invocation)
+        status, output = self.result()
+        self.assertEqual(status, 1, output)
+        self.assertIn('script grants differ', output)
+        self.skill.write_text(original.replace('effort: high', '''effort: high
+allowed-tools:
+  - Bash(python3 -B ${CLAUDE_PLUGIN_ROOT}/scripts/retain.py *)''') + invocation)
+        status, output = self.result()
+        self.assertEqual(status, 0, output)
+
+    def test_integrity_inspect_grant_is_accepted(self):
+        self.write(self.plugin / 'scripts/text_integrity.py', '# ABOUTME: Inspects a synthetic fixture.\n')
+        original = self.skill.read_text()
+        invocation = '\nRun `python3 -B "<plugin-root>/scripts/text_integrity.py" inspect INPUT`.\n'
+        grant = 'Bash(python3 -B ${CLAUDE_PLUGIN_ROOT}/scripts/text_integrity.py inspect *)'
+        for metadata in (f'allowed-tools:\n  - Read\n  - {grant}', f'allowed-tools: Read, {grant}'):
+            with self.subTest(metadata=metadata):
+                self.skill.write_text(original.replace('effort: high', 'effort: high\n' + metadata) + invocation)
+                status, output = self.result()
+                self.assertEqual(status, 0, output)
+
+    def test_integrity_broad_mutating_and_missing_grants_are_rejected(self):
+        self.write(self.plugin / 'scripts/text_integrity.py', '# ABOUTME: Inspects a synthetic fixture.\n')
+        original = self.skill.read_text()
+        invocation = '\nRun `python3 -B "<plugin-root>/scripts/text_integrity.py" inspect INPUT`.\n'
+        prefix = 'Bash(python3 -B ${CLAUDE_PLUGIN_ROOT}/scripts/text_integrity.py '
+        grants = [prefix + '*)', prefix + 'apply-edits *)',
+                  prefix + 'inspect:*)', prefix + 'inspect *)\n  - ' + prefix + 'apply-edits *)',
+                  prefix + 'inspect *)\n  - Bash(*)', prefix + 'inspect *)\n  - Bash', 'Read']
+        for grant in grants:
+            with self.subTest(grant=grant):
+                metadata = 'allowed-tools:\n  - ' + grant
+                self.skill.write_text(original.replace('effort: high', 'effort: high\n' + metadata) + invocation)
+                status, output = self.result()
+                self.assertEqual(status, 1, output)
+                self.assertIn('text_integrity.py requires exactly its inspect-only grant', output)
+
     def test_agent_cannot_select_a_model_or_force_inheritance(self):
         original = self.agent.read_text()
         for value in ('sonnet', 'inherit', 'provider/model-name', 'null'):

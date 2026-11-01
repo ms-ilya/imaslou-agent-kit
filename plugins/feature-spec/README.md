@@ -52,8 +52,8 @@ design note, or a plain idea. It builds a design record from that, checks every
 claim about the repo against the code, and asks only about what is still unclear.
 Complete input gets no questions at all. Then it records the strategy you chose
 *and the ones you rejected*, builds a glossary, promotes hard-to-reverse decisions
-to ADRs, drafts a spec, and has an independent critic score it before anything is
-written.
+to ADRs, drafts a spec, and has an independent critic score the draft before
+publication.
 
 **The spec run stops at the spec, and never learns that a plan can follow it.**
 That separation is load-bearing: a spec written as a gate on the way to code gets
@@ -251,9 +251,10 @@ category list is this plugin's own — see Prior art.
   the rubric no longer asks for a check the packet has no input for. Every quote
   in its reply is compared with the packet; a finding about words that are not
   there is discarded instead of acted on.
-- **The checkers are themselves tested.** A maintainer self-test, not shipped
-  with the plugin, asserts the shipped skeletons validate, then mutates one rule
-  at a time and asserts that rule's specific failure fires — 237 assertions.
+- **The checkers are themselves tested.** The bundled `scripts/test-checks.sh`
+  asserts the shipped skeletons validate, then mutates individual rules and
+  checks that their specific failures fire. Repository packaging tests also run
+  it after relocation.
 - **Validation distinguishes incomplete from wrong.** In Claude Code a
   `PostToolUse` hook runs the checker after writes to the record, draft, plan or
   task files. In Codex the skill explicitly runs the same check after writes. It

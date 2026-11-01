@@ -1,140 +1,225 @@
 # Full example
 
-This example shows English text. The same principles and process apply to any language.
+These English and Russian examples are synthetic instructional illustrations. Their names, dates, quantities, and claims are supplied as example input, not verified reports about real products. They illustrate filler removal and informative recomposition, not detector performance or a calibrated quality score. Legitimate punctuation, complete three-item lists, and similar sentence lengths may remain. The goal is to improve the supplied prose in its own language and register, without a texture quota.
 
-**Before (AI-sounding):**
-> Great question! Here is an essay on this topic. I hope this helps!
+**Preservation takes precedence over every style pattern.** Preserve substantive claims, attribution, uncertainty, numbers, dates, units, limits, logical relationships, and every enumeration member. Remove only content-free filler, redundant restatement, and chatbot scaffolding unless the user requests abridgment. Keep protected content and the requested editing scope unchanged.
+
+## Example 1: English project update
+
+**Before:**
+> Great question! Here is the project update.
 >
-> AI-assisted coding serves as an enduring testament to the transformative potential of large language models, marking a pivotal moment in the evolution of software development. In today's rapidly evolving technological landscape, these groundbreaking tools - nestled at the intersection of research and practice - are reshaping how engineers ideate, iterate, and deliver, underscoring their vital role in modern workflows.
+> It's important to note that the team's 12 May 2026 pilot report says the revised dashboard may reduce the time staff spend finding reports. The finding is limited to the pilot group, and the report does not establish whether the benefit will persist.
 >
-> At its core, the value proposition is clear: streamlining processes, enhancing collaboration, and fostering alignment. It's not just about autocomplete; it's about unlocking creativity at scale, ensuring that organizations can remain agile while delivering seamless, intuitive, and powerful experiences to users. The tool serves as a catalyst. The assistant functions as a partner. The system stands as a foundation for innovation.
+> The pilot covered three workflows: exporting reports, comparing monthly totals, and checking access permissions. Additionally, the team has not yet measured error rates. For the pilot, the system allowed at most 20 exports per user per day.
 >
-> Industry observers have noted that adoption has accelerated from hobbyist experiments to enterprise-wide rollouts, from solo developers to cross-functional teams. The technology has been featured in The New York Times, Wired, and The Verge. Additionally, the ability to generate documentation, tests, and refactors showcases how AI can contribute to better outcomes, highlighting the intricate interplay between automation and human judgment.
->
-> - **Speed:** Code generation is significantly faster, reducing friction and empowering developers.
-> - **Quality:** Output quality has been enhanced through improved training, contributing to higher standards.
-> - **Adoption:** Usage continues to grow, reflecting broader industry trends.
->
-> While specific details are limited based on available information, it could potentially be argued that these tools might have some positive effect. Despite challenges typical of emerging technologies - including hallucinations, bias, and accountability - the ecosystem continues to thrive. In order to fully realize this potential, teams must align with best practices.
->
-> In conclusion, the future looks bright. Exciting times lie ahead as we continue this journey toward excellence. Let me know if you'd like me to expand on any section!
+> In conclusion, the team will review the pilot on 30 June 2026. Let me know if you'd like more detail!
 
 **Content Intelligence scan:**
-- Language: English
-- Content type: Blog/essay (opinionated, first-person wrapper, informal register)
-- Mixed content: None
-- Voice signals: Chatbot wrapper has first-person ("I hope"), but the body is neutral - Content Integrity mode for the body
-- AI density: HIGH - 10+ Tier 1 patterns, uniform sentence length, extreme pattern stacking
+- Language: English.
+- Content type: Project update with a neutral, factual register.
+- Mixed content: None.
+- Voice signals: The conversational wrapper does not authorize adding opinions or personal experience to the body.
+- Editing targets: “It's important to note,” “Additionally,” and the chatbot wrapper delay an otherwise direct update without adding information. The report's attribution and limitations carry information.
+- Paragraph review: The paragraphs cover the qualified finding, pilot scope and limits, and next review. Their order and repeated references to the pilot make the relationships clear; no structural variation is required.
 
-**Self-audit Pass 1 - adversarial self-question:**
-*(Internal: "What makes this text still obviously AI-generated after my first draft?")*
-
-- First draft used "I've accepted suggestions" - that's first-person voice injected into Content Integrity mode. Remove.
-- First draft mentioned a specific GitHub acceptance-rate statistic - that number wasn't in the original. Anti-hallucination violation. Remove.
-- Rhythm in paragraphs 2-3 was too evenly varied - overcorrection. Make it messier.
-- "Both seem reasonable" at the end of a paragraph is too neat - it's a mini-conclusion.
-
-*(Fixed all four before proceeding to Pass 2.)*
+**Self-audit Pass 1 - questions to ask of a draft:**
+- Does “may reduce” remain uncertain, rather than becoming “reduces”?
+- Are the pilot-group limitation and the unknown persistence of the benefit still present?
+- Are all three workflows present?
+- Does the export limit still apply per user, per day, and only to the pilot?
+- Have the dates, the unmeasured error rates, and the planned review survived?
 
 **Final rewrite:**
-> AI coding tools help with the boring parts - boilerplate, test scaffolding, repetitive refactors. They're less useful for architecture or anything requiring judgment about trade-offs.
+> The team's 12 May 2026 pilot report says the revised dashboard may reduce the time staff spend finding reports. The finding is limited to the pilot group, and the report does not establish whether the benefit will persist.
 >
-> Adoption has grown. The original text mentions media coverage (NYT, Wired, The Verge) but not what those outlets actually said, so it's hard to know what the coverage means. Code generation is faster, and output quality has improved with better training data.
+> The pilot covered exporting reports, comparing monthly totals, and checking access permissions. The team has not yet measured error rates. For the pilot, the system allowed at most 20 exports per user per day.
 >
-> The real question is whether "faster" means "better." These tools can generate code that compiles and passes lint but still misses the point. Hallucinations, bias, and accountability remain open problems - the original text acknowledges this but doesn't say how teams are addressing them.
->
-> Documentation and test generation are probably the strongest use cases. The gap between automation and human judgment matters most when the stakes are high. For config files, less so.
+> The team will review the pilot on 30 June 2026.
 
 **Content preservation check:**
-- ✓ Core claim (AI tools reshape development) - preserved, made more specific
-- ✓ Adoption growth - preserved
-- ✓ Media coverage - preserved with caveat about vagueness (original was vague)
-- ✓ Speed/quality/adoption benefits - preserved, converted from list to prose
-- ✓ Challenges (hallucinations, bias, accountability) - preserved
-- ✓ Documentation/test generation - preserved
-- ✓ Automation vs. human judgment - preserved
-- ✗ "Creativity at scale" claim - dropped (filler with no specific content behind it)
-- ✗ "Best practices" recommendation - dropped (generic, no actionable content)
-- Note: Did NOT invent any statistics or specific citations not in the original
+| Supplied content | Where it survives |
+|------------------|-------------------|
+| Team's report and 12 May 2026 date | Opening sentence |
+| Revised dashboard may reduce report-finding time | Opening sentence, with “may” retained |
+| Finding limited to pilot group; persistence not established | Second sentence |
+| Exporting reports, comparing monthly totals, checking access permissions | Complete enumeration in second paragraph |
+| Error rates not yet measured by the team | Second paragraph |
+| At most 20 exports per user per day during the pilot | Second paragraph, with all units and limits |
+| Team will review pilot on 30 June 2026 | Final paragraph |
 
-**Quality scoring:**
-| Dimension | Score | Notes |
-|-----------|-------|-------|
-| Directness | 8 | No filler, no throat-clearing |
-| Rhythm | 7 | Good variation, one paragraph could be shorter |
-| Trust | 8 | States things and moves on; calls out original's vagueness rather than filling gaps |
-| Authenticity | 7 | Reads human; some sentences could be more opinionated but Content Integrity mode limits this |
-| Preservation | 9 | All substantive claims preserved; only pure filler dropped |
-| **Total** | **39/50** | Passes quality gate (≥35) |
+**Quality review (instructional):**
+- The rewrite states the update directly and keeps its neutral register.
+- The final paragraph stays because it contains a planned action and date; its position does not make it disposable.
+- The three-item enumeration stays complete. No click counts, new sources, or claims of proven benefit appear.
 
 **Changes made:**
-- Removed chatbot artifacts ("Great question!", "I hope this helps!", "Let me know if...", "While specific details are limited...")
-- Removed significance inflation ("testament", "pivotal moment", "evolving landscape", "vital role")
-- Removed promotional language ("groundbreaking", "nestled", "seamless, intuitive, and powerful")
-- Removed vague attributions ("Industry observers") - noted the vagueness rather than fabricating specifics
-- Removed participial tails ("underscoring", "highlighting", "reflecting", "contributing to", "reducing friction", "empowering")
-- Removed negative parallelism ("It's not just X; it's Y")
-- Removed rule of three ("catalyst/partner/foundation", "streamlining/enhancing/fostering")
-- Removed false ranges ("from X to Y, from A to B")
-- Removed copula avoidance ("serves as", "functions as", "stands as")
-- Removed formulaic conclusion ("the future looks bright", "exciting times lie ahead", "journey toward excellence")
-- Removed hedging ("could potentially be argued that... might have some")
-- Removed filler ("In order to", "At its core", "the value proposition is clear:")
-- Removed conclusion bloat ("In conclusion...")
-- Converted bold-label bullet list to flowing prose (Pattern 13)
-- Applied statistical texture: varied paragraph lengths (2-4 sentences), mixed sentence lengths, used contractions, added parenthetical
-- Used pronouns ("they're") instead of restating noun phrases
-- Anti-hallucination: explicitly did NOT invent statistics or citations to replace vague original claims
+- Removed “Great question,” the introductory wrapper, and the offer to continue.
+- Removed “It's important to note,” “Additionally,” and “In conclusion.”
+- Removed “three workflows” as a redundant introduction while preserving all three workflows.
 
-> Verification: 0 Tier 1 patterns remaining. Quality: 39/50. Sentence length range: 4–28 words. Paragraph length range: 2–4 sentences.
+**Verification status:** This is a supplied-input comparison for an instructional example. No independent judge result, detector result, or numerical quality score is claimed.
 
 ---
 
-## Example 2: Technical documentation (short, with code)
+## Example 2: Russian technical documentation, with code
 
-**Before (AI-sounding):**
-> ## Getting Started
+**Before:**
+> ## Начало Работы
 >
-> It's important to note that this library leverages WebSocket connections to facilitate real-time data synchronization. The library serves as a robust foundation for building responsive applications, streamlining the process of managing state across distributed systems.
+> Важно отметить, что Atlas — библиотека для синхронизации состояния через WebSocket. Согласно руководству команды от 12 мая 2026 года, библиотека может уменьшить задержку синхронизации в локальной сети; для мобильных сетей это пока не проверено.
 >
-> To get started, you'll need to install the package. Additionally, ensure that your environment is properly configured. The installation process is straightforward:
+> Для начала работы необходимо сначала установить пакет, а затем настроить сервер. Следует помнить, что для настройки нужны адрес сервера, ключ доступа и имя канала.
 >
 > ```bash
-> npm install sync-state
+> npm install atlas-sync
 > ```
 >
-> The library boasts a comprehensive API that empowers developers to harness the full potential of real-time synchronization. Overall, it's a powerful tool that plays a crucial role in modern application development.
+> Крайне важно подчеркнуть, что время ожидания — 30 секунд. По достижении лимита запрос завершается ошибкой; автоматический повтор не предусмотрен.
+>
+> В заключение необходимо отметить, что руководство пока не описывает восстановление соединения.
 
 **Content Intelligence scan:**
-- Language: English
-- Content type: Technical documentation (third-person, precise register, no opinions)
-- Mixed content: Yes - fenced code block (preserve exactly)
-- Voice signals: No first-person, no opinions → Content Integrity mode
-- AI density: HIGH - 7 Tier 1 patterns in ~100 words
+- Language: Russian, with a product name, protocol name, and protected shell command.
+- Content type: Technical documentation with a neutral register.
+- Mixed content: Heading and fenced code block; preserve the code exactly.
+- Voice signals: No personal opinions or experience to amplify.
+- Editing targets: “Важно отметить,” “Следует помнить,” and “Крайне важно подчеркнуть” repeat empty importance markers around straightforward documentation. The attribution, caveat, setup requirements, sequence, timeout, and recovery limitation carry information.
+- Paragraph review: Keep the capability and its caveat together, the setup requirements beside the command, and the timeout beside the failure behavior. The final documentation limitation has a distinct purpose and stays.
 
 **Final rewrite:**
-> ## Getting started
+> ## Начало работы
 >
-> This library uses WebSocket connections for real-time state sync across distributed systems.
+> Atlas — библиотека для синхронизации состояния через WebSocket. Согласно руководству команды от 12 мая 2026 года, библиотека может уменьшить задержку синхронизации в локальной сети; для мобильных сетей это пока не проверено.
 >
-> Install the package:
+> Сначала установите пакет, затем настройте сервер. Для настройки нужны адрес сервера, ключ доступа и имя канала.
 >
 > ```bash
-> npm install sync-state
+> npm install atlas-sync
 > ```
 >
-> The API docs cover connection setup, state management, and conflict resolution.
+> Время ожидания — 30 секунд. По достижении лимита запрос завершается ошибкой; автоматический повтор не предусмотрен.
+>
+> Руководство пока не описывает восстановление соединения.
+
+**Content preservation check:**
+| Supplied content | Where it survives |
+|------------------|-------------------|
+| Atlas synchronizes state through WebSocket | Opening sentence |
+| Team guide dated 12 мая 2026 года | Second sentence |
+| Possible latency reduction in a local network | “может уменьшить” and “в локальной сети” retained |
+| Mobile networks have not yet been checked | Caveat retained in the same sentence |
+| Install package before configuring server | “Сначала … затем” preserves order |
+| Server address, access key, channel name | Complete three-item requirement |
+| Installation command | Fenced code block unchanged |
+| 30-second timeout and error at the limit | Timeout paragraph |
+| No automatic retry | “автоматический повтор не предусмотрен” retained |
+| Guide does not yet describe reconnection | Final sentence |
 
 **Changes made:**
-- Removed didactic disclaimer ("It's important to note")
-- Replaced AI vocabulary: "leverages" → "uses", "facilitate" → cut, "robust" → cut, "streamlining" → cut, "straightforward" → cut, "comprehensive" → cut, "empowers" → cut, "harness" → cut, "crucial role" → cut
-- Removed copula avoidance ("serves as a robust foundation" → cut entirely)
-- Removed significance inflation ("boasts", "full potential")
-- Removed conclusion bloat ("Overall, it's a powerful tool that plays a crucial role")
-- Removed formulaic transition ("Additionally")
-- Removed filler ("the process of", "you'll need to", "ensure that your environment is properly configured")
-- Title case → sentence case in heading
-- Preserved code block exactly
-- Content Integrity mode: no personality added (technical docs)
+- Removed repeated importance markers and the formulaic conclusion opener.
+- Shortened the setup instruction without changing its order or required inputs.
+- Changed the heading to sentence case.
+- Kept the grammatical Russian dashes in “Atlas — библиотека” and “Время ожидания — 30 секунд.” Their presence is not a style failure.
+- Preserved the entire enumeration, qualifications, date, units, failure behavior, and code block.
 
-> Verification: 0 Tier 1 patterns remaining. Quality: 41/50. Sentence length range: 3–12 words. Paragraph length range: 1–2 sentences.
+**Verification status:** This is a supplied-input comparison for an instructional example. No API documentation coverage, product capability, independent judge score, or detector outcome is inferred beyond the supplied input. Russian detector performance remains unmeasured.
+
+---
+
+## Example 3: English full rewrite without filler
+
+**Request:** Rewrite the full notice in natural, neutral prose; preserve all information.
+
+**Before:**
+> The nursery's seed orders close on 14 February. Orders may be collected from 3 March. Collection is available on weekdays between 09:00 and 16:00. The order form must include the seed variety and quantity. The nursery confirms stock before requesting payment. A confirmation does not reserve seeds beyond 48 hours. Orders that remain unpaid after that period are cancelled. Staff have not yet measured how often the deadline causes cancellations.
+
+**After:**
+> Seed orders for the nursery close on 14 February; the form must specify the variety and quantity. Collection is available from 3 March, on weekdays between 09:00 and 16:00.
+>
+> Before requesting payment, the nursery confirms stock. Confirmation does not reserve seeds beyond 48 hours, and orders still unpaid after that period are cancelled. Staff have not yet measured how often this deadline leads to cancellations.
+
+The rewrite groups placing and collecting an order separately from confirmation and payment. It combines related facts instead of substituting synonyms sentence by sentence. The deadline, collection window, both form fields, stock-before-payment sequence, reservation limit, cancellation condition and unmeasured frequency all survive. It does not promise that confirmation guarantees stock throughout the 48 hours, or identify who cancels orders when the source leaves that actor unspecified. Neutral voice does not require retaining eight separate sentence frames. No particular paragraph or sentence count is the target.
+
+**Same source, narrower request:** Under an explicit “Tier 1 only” request, the original notice can remain unchanged: its short factual sentences carry no actionable Tier 1 problem. A generic light pass permits local fixes across the catalog but no broader recomposition. Under “rewrite only the collection details,” only the two collection sentences are editable; the ordering, form, stock, payment and measurement sentences stay exact. Full-rewrite permission does not carry over to these narrower requests.
+
+## Example 4: Russian full rewrite without added voice
+
+**Запрос:** Полностью переработай формулировки, сохрани нейтральный стиль и все сведения.
+
+**До:**
+> В учебном центре заявления на вечерний курс принимают до 18 августа. Занятия начнутся 2 сентября. Они будут проходить по вторникам и четвергам с 19:00 до 20:30. Для записи нужны анкета и копия документа об образовании. Администратор проверяет комплектность документов, затем отправляет приглашение на собеседование. Приглашение не означает зачисления. Решение о зачислении принимает комиссия после собеседования. Центр пока не оценивал, помогает ли собеседование точнее распределять участников по группам.
+
+**После:**
+> Для записи на вечерний курс в учебном центре нужны анкета и копия документа об образовании. Заявления принимают до 18 августа. Занятия начнутся 2 сентября и будут проходить по вторникам и четвергам с 19:00 до 20:30.
+>
+> Администратор сначала проверяет комплектность документов и затем отправляет приглашение на собеседование. Само приглашение не означает зачисления: это решение комиссия принимает после собеседования. Центр пока не оценивал, помогает ли собеседование точнее распределять участников по группам.
+
+Здесь условия подачи и расписание отделены от процедуры принятия решения. Сохранены обе части комплекта, даты, дни и время, обязанности администратора, порядок проверки и приглашения, оговорка о зачислении, роль комиссии и отсутствие оценки результата собеседования. Перестройка не добавляет рассказчика, мнения или гарантии зачисления; «после собеседования» по-прежнему относится к решению комиссии. Это пример редакторского выбора, а не измеренный результат детектора.
+
+## Example 5: Supplied style without borrowed experience
+
+**Request:** Fully rewrite the note using compatible features of the supplied sample. The sample provides style only.
+
+**Style sample:** “Let's check the logs first. I tried that yesterday, and it helped.”
+
+**Source:** “The team's next step is to compare the logs before deciding whether to expand the trial. The team has not set a decision date.”
+
+**Rewrite:** “The team needs to compare the logs before deciding whether to expand the trial. The team hasn't set a decision date yet.”
+
+The sample supports direct syntax and a conversational contraction. It does not supply yesterday's experience, a proven benefit or a first-person speaker for this note. The team's action, dependency and unset date survive. Without a sample, the source's neutral register is sufficient; no invented persona or request for samples is needed.
+
+**Legitimate English control, unchanged:** “The analysis uses robust regression. However, rural clinics were excluded, so the estimate may not apply to them.” The technical term, meaningful contrast and qualified scope all belong. Similarly, “A wide range of temperatures” cannot automatically become “many temperatures,” and “At the end of the day, lock the door” must retain its timing when meant literally.
+
+## Example 6: Mixed prose and precise paste cleanup
+
+**Request:** Rewrite the introduction only. The first two lines are unwanted assistant/interface residue and may also be removed. Keep the reference section exact; do not translate.
+
+**Before:**
+> Certainly! Here is your note.
+> Copy response
+>
+> ## Introduction
+> It is important to note that the result may change. Статус — предварительный. See [guide](https://example.org/guide?utm_source=mail&x=1). citeunknown7
+>
+> ## Reference
+> The literal token `citeturn0search0` is an example. Keep 👩‍💻 and café.
+
+**After:**
+>
+> ## Introduction
+> The result may change. Статус — предварительный. See [guide](https://example.org/guide?utm_source=mail&x=1). citeunknown7
+>
+> ## Reference
+> The literal token `citeturn0search0` is an example. Keep 👩‍💻 and café.
+
+Only explicitly unwanted residue and empty framing disappear. The blank line after the two removed lines remains outside the editable section. The unresolved citation remains because its appearance does not establish that it is disposable. The URL parameters, quoted token, emoji/joiner, accented text, grammatical Russian dash and out-of-scope section stay exact. No global Unicode cleanup or translation is justified.
+
+## Grammatical prose with a structural objective
+
+These are instructional examples, not pilot results or detector evidence. The objective is to connect the decision with its reason while retaining all qualifications.
+
+**Source:** “The council should keep evening access. Evening access matters to residents who finish work after six. The current budget could cover one evening each week. It could not cover two. That estimate assumes volunteer support. Without volunteers, even one evening would require more funding.”
+
+**Rewrite:** “The council should keep evening access for residents who finish work after six. If volunteers help, the current budget could cover one evening a week, but not two. Without volunteers, even one evening would require more funding.”
+
+Preserved: the recommendation, affected residents/time, budget possibility, one-versus-two limit and volunteer-dependent estimate. “Could cover” cannot become “will cover,” and the last qualification cannot be dropped as a repetitive conclusion. No personal anecdote or stronger promise is added.
+
+**Русский исходник:** «Библиотеке стоит сохранить вечерние часы. Они нужны жителям, которые заканчивают работу после шести. По предварительной оценке, нынешнего бюджета может хватить на один вечер в неделю, но не на два. Эта оценка предполагает помощь волонтёров. Без них даже один вечер потребует дополнительного финансирования».
+
+**Редакция:** «Библиотеке стоит сохранить вечерние часы: они нужны жителям, которые заканчивают работу после шести. По предварительной оценке, если помогут волонтёры, нынешнего бюджета может хватить на один вечер в неделю, но не на два. Без волонтёров даже один вечер потребует дополнительного финансирования».
+
+The recommendation, residents' need, preliminary estimate, possibility and condition remain attached to the same claims. A grammatical dash, technical term or repeated “волонтёры” would not itself justify another edit.
+
+**Legitimate regularity:** “Back up the database. Verify the backup. Record the verification result.” These parallel instructions encode a useful order. Keep them unless the actual request provides a reader-facing reason to change their expression; a repeated imperative shape is not a failed objective.
+
+
+## Contextual fidelity examples
+
+These are instructional comparisons, not model trials or adjudicated evaluation labels. Review the entire passage before a verdict.
+
+- “Her growing unease makes her more than an illustration of the premise” retains a causal relationship. “She grows uneasy and becomes more than an illustration” may leave only sequence; the reviewer must check whether the surrounding text supplies the original cause. Repeating both nouns is insufficient.
+- «Фильм не пытается подробно объяснить устройство города» concerns intent. «Фильм не объясняет подробно устройство города» alone can lose that distinction. A source-only anchor asks whether this is intent or outcome; it supplies no preparatory paraphrase as an answer.
+- «Улицы выглядят обещанием спокойствия» and «улицы обещают спокойствие» can preserve an impression within a metaphor and subsequent contrast. The shorter phrase is not automatically a certainty error. If the complete context leaves equivalence unclear, report the specific uncertainty; do not treat this disputed phrase as a mandatory negative example.
+
+A valid report may contain minor findings from either tier and still PASS. A concrete substantial problem yields REVISE even with maximum requested scores. UNCERTAIN yields UNRESOLVED unless a demonstrated semantic FAIL already requires REVISE. Scores are normally NOT_REQUESTED; none of these examples establishes a detector outcome.

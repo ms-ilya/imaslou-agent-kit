@@ -85,10 +85,24 @@ def check(root=ROOT):
             require(policy is (not meta.get('disable-model-invocation', False)), policy_path,
                     'Codex invocation policy differs from Claude policy')
             # Claude grants and portable script calls must still name the same helpers.
-            grants = set(re.findall(r'Bash\(bash \$\{CLAUDE_PLUGIN_ROOT\}/scripts/([\w.-]+\.sh)',
+            grants = set(re.findall(r'Bash\((?:bash|python3(?: -B)?) \$\{CLAUDE_PLUGIN_ROOT\}/scripts/([\w.-]+\.(?:sh|py))',
                                     path.read_text().split('---', 2)[1]))
-            used = set(re.findall(r'<plugin-root>/scripts/([\w.-]+\.sh)', body))
+            # A helper may be documented in a linked reference, but the entrypoint
+            # must still name it so its portable call and host grant can be checked.
+            used = set(re.findall(r'<plugin-root>/scripts/([\w.-]+\.(?:sh|py))', body))
             require(grants == used, path, f'script grants differ: granted={sorted(grants)}, used={sorted(used)}')
+            # The standalone editor must not inherit the inspector's workflow grant.
+            if 'text_integrity.py' in grants | used:
+                tools = meta.get('allowed-tools', [])
+                if isinstance(tools, str):
+                    tools = re.findall(r'(?<![\w-])Bash(?:\([^)]*\))?', tools)
+                tools = tools if isinstance(tools, list) else []
+                integrity_grants = [tool for tool in tools
+                                    if isinstance(tool, str) and 'text_integrity.py' in tool]
+                inspect_grant = 'Bash(python3 -B ${CLAUDE_PLUGIN_ROOT}/scripts/text_integrity.py inspect *)'
+                require(integrity_grants == [inspect_grant] and
+                        not any(tool in ('Bash', 'Bash(*)') for tool in tools), path,
+                        'text_integrity.py requires exactly its inspect-only grant; broad or mutating grants are forbidden')
             for agent_plugin, role in re.findall(r'subagent_type[:=]\s*"([\w-]+):([\w-]+)"', body):
                 require(agent_plugin == plugin.name and (plugin / 'agents' / f'{role}.md').is_file(),
                         path, f'agent role not bundled: {agent_plugin}:{role}')

@@ -32,7 +32,7 @@ session's model when no host override applies. You can request a supported
 model explicitly.
 
 
-A step-by-step code review for iOS/Swift that scales depth to diff size. Checks eight areas: correctness, architecture, naming, dead code, performance, side effects, and AGENTS.md compliance.
+A step-by-step code review for iOS/Swift that scales depth to diff size. Eight phases acquire the changes, map scope, and review correctness, architecture, naming, dead code, performance and side effects/AGENTS.md compliance.
 
 **When to use this vs `ios-comprehensive-review`:** This plugin suits smaller changes, uncommitted work, and cases where you want scope confirmation, performance checks, or compliance checks. Use `ios-comprehensive-review` for large PRs that need parallel analysis, cross-file checks (duplicates, breaking changes, SOLID), or the ability to resume interrupted reviews.
 
@@ -50,7 +50,7 @@ Each phase targets a different class of problem (correctness, architecture, nami
 
 ## What it does
 
-Eight sequential phases, each targeting a specific issue class:
+Eight phases cover acquisition, scope and six review areas:
 
 ```
 Phase 0: Acquire Changes    →  Get the diff via git commands (uncommitted, commit, or PR)
@@ -66,7 +66,7 @@ Phase 7: Side Effects       →  Hidden mutations, order-dependent operations, A
 ### Features
 
 - **No fabricated findings** - reads actual code before reporting, includes real snippets, rechecks line numbers before writing each finding
-- **Scales to diff size** - small diffs run fast (~1 min), large diffs split into batches across parallel agents
+- **Scales to diff size** - small diffs use a combined pass, large diffs split into batches across parallel agents
 - **Phase 1 checkpoint** - shows what will be reviewed, and asks for confirmation before deep analysis when the scope is ambiguous or the diff is large
 - **Progress tracking** - names the phases up front and reports each one as it runs
 - **Traces usage** - every changed function or variable is searched across the entire project; unchanged files that might be affected get flagged
@@ -126,7 +126,7 @@ Runs `git diff HEAD` to capture all staged and unstaged changes against the curr
 | Scenario | What happens |
 |----------|-------------|
 | Uncommitted/staged changes exist | Reviews them - the default workflow |
-| Clean working tree, no arguments | Asks what to review; no error |
+| Clean working tree, no arguments | Reports no reviewable changes and stops |
 | On any branch (main, feature, etc.) | Works - compares working tree to HEAD |
 
 ### With arguments

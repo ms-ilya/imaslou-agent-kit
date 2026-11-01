@@ -51,7 +51,7 @@ The debate runs through structured rounds, each dispatched as parallel Agent too
 
 ```
 Step 0: Parse & Frame       →  Identify the issue, narrow if too broad, choose debate depth
-Step 1: Agent Assembly      →  Select 3-5 agents tailored to the specific issue
+Step 1: Agent Assembly      →  Select a tailored panel, normally 3 agents
 Step 2: Build & Dispatch    →  Construct role prompts, spawn independent subagents
 Step 3: Round Execution     →  Opening → Cross-Examination → Rebuttals (3 rounds or 2 for quick)
 Step 4: Final Judgment      →  The agent steps into Judge role, synthesizes verdict
@@ -60,7 +60,7 @@ Step 5: Post-Debate Options →  Go deeper, challenge, add agent, or export
 
 ### Agent design
 
-Each debate gets 2-6 custom agents (typically 3-5), chosen for the topic. There are no generic "Optimist/Pessimist" panels. Agents are built using a hybrid system: 10 built-in thinking styles give them deeper personalities (how they think, how they argue, what they tend to miss), while fully custom agents can be created from scratch when no built-in style fits.
+The default is 3 custom agents; quick mode also uses 3. Larger panels need distinct stakeholders or dimensions, and explicit custom counts can range from 2 to 6. Binary questions need at least a third perspective. There are no generic "Optimist/Pessimist" panels. Agents are built using a hybrid system: 10 built-in thinking styles give them deeper personalities (how they think, how they argue, what they tend to miss), while fully custom agents can be created from scratch when no built-in style fits.
 
 Every agent has:
 
@@ -199,7 +199,7 @@ The system reads `references/archetypes.md` once when building agents. Agents th
 ## Design
 
 - Agents are truly independent: separate `debate-agent` subagents with one requested reply and no inherited conversation context before cross-examination (`maxTurns: 1` is Claude-specific)
-- Minimum 3 agents per debate to avoid simple "for vs against" framing
+- Default 3 agents; binary questions require at least 3 to avoid simple "for vs against" framing
 - Full debate (3 rounds) or quick analysis (2 rounds)
 - Organized cross-examination where each agent gets a dedicated section per opponent
 - Responses kept short, 200-350 words per agent per round

@@ -65,7 +65,7 @@ Phase 3: Report & Solutions        →  Write RCA report, propose systemic fixes
 
 **5 Whys** - Each "why" is backed by evidence from the investigation. The chain continues until it reaches a system-level cause.
 
-**Fishbone diagram** - Groups contributing factors into categories: Code, Data, Infrastructure, and Process. Full investigations get the complete version; standard ones get a checklist.
+**Fishbone diagram** - Groups contributing factors into categories: Code, Data, Infrastructure, Process and People. Full investigations get the complete version; standard ones get a checklist.
 
 **Confidence rating** - Every finding gets a High/Medium/Low rating based on evidence strength.
 

@@ -38,7 +38,7 @@
     {
       "name": "humanizer",
       "source": "./plugins/humanizer",
-      "description": "Remove AI writing patterns from text. Priority-tiered detection, statistical texture, voice anchoring, two-pass self-audit."
+      "description": "Rewrite or audit English/Russian prose with meaning and voice preservation and bounded editorial verification."
     },
     {
       "name": "appstore-guideline-auditor",
